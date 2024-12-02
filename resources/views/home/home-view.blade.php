@@ -8,17 +8,23 @@
     @csrf -->
         <label style="width: 100%; color : #000; text-align: left;">Enter your unique ID or Email</label>
         <div class="row">
-            <div class="col-md-6">
-                <input type="email" name="loginEmail" class="form-control" id="loginEmail" placeholder="Email">
+            <div class="col-md-6 eml-bx">
+                <div class="mbx" style="position:relative;">
+                    <input type="email" name="loginEmail" class="form-control" id="loginEmail" placeholder="Email">
+                    <a class="button vrf-btn" style="position:absolute; right: 20px; bottom: 10px; color: #ff0000; text-decoration: none; cursor:pointer;" id="verifyBtn" onclick="verifyOtp()">Verify</a>
+                </div>
                 <span class="text-danger" id="emailError"></span>
+                
             </div>
             <div class="col-md-6">
                 <input type="number" class="form-control" name="loginOtp" style="display:none" id="loginOtp" placeholder="OTP" >
                 <span class="text-danger" id="otpError"></span>
             </div>            
         </div>
+        
+        
+
         <a class="button" style="display:none" id="resendBtn" style="color:red" onclick="resendOtp()">Resend</a>
-        <a class="button"  id="verifyBtn" style="color:red" onclick="verifyOtp()">Verify</a>
         
         <!-- Moved the "Verify" button below the email input field -->
         <button id="loginSubmit" style="display:none" class="verify-btn" onclick="submitOtp()">Submit</button>

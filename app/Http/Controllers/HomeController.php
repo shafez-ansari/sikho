@@ -148,24 +148,25 @@ class HomeController extends Controller
 
     public function StudentDetails()
     {
-        $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, u.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, u.batch_code, u.semester, u.enrollment_datr 
+        $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, u.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, u.batch_code, u.semester, u.enrollment_datr, ui.img_name, ui.img_path 
                                 FROM users u
                                 LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
                                 LEFT JOIN school s ON s.school_id = u.fk_school_id
                                 LEFT JOIN courses c ON c.course_id = u.fk_course_id
                                 LEFT JOIN program p ON p.program_id = u.fk_program_id
+                                LEFT JOIN user_image ui on ui.fk_user_id = u.user_id
                                 WHERE u.email = ?", [session('email')]);
 
         return view('home.student-details', compact(['userList']));
     }
 
-    public function SubmitPlacement(Request $req)
+    public function SubmitPlacement($entityName, $school, $yes, $no, $course)
     {
-        $entityName = $req->entity;
-        $school = $req->school;
-        $course = $req->course;
-        $yes = $req->yes;
-        $no = $req->no;
+        // $entityName = $req->entity;
+        // $school = $req->school;
+        // $course = $req->course;
+        // $yes = $req->yes;
+        // $no = $req->no;
         $jobProfile = "";
         $academicQual = "";
         $jobType = "";
@@ -187,59 +188,59 @@ class HomeController extends Controller
             {                  
                 if($school == "School of Animation")
                 {
-                    $jobProfile = DB::select("SELECT soa_profile_id, soa_profile_name FROM job_profile_soa");
+                    $jobProfile = DB::select("SELECT soa_profile_id, profile_name FROM job_profile_soa");
                 }
                 else if($school == "School of Cinema")
                 {
-                    $jobProfile = DB::select("SELECT soc_profile_id, soc_profile_name FROM job_profile_soc");
+                    $jobProfile = DB::select("SELECT soc_profile_id, profile_name FROM job_profile_soc");
                 }
                 else if($school == "School of Advertising, PR and Events")
                 {
-                    $jobProfile = DB::select("SELECT soapre_profile_id, soapre_profile_name FROM job_profile_soapre");
+                    $jobProfile = DB::select("SELECT soapre_profile_id, profile_name FROM job_profile_soapre");
                 }
                 else if($school == "School of Data Science")
                 {
-                    $jobProfile = DB::select("SELECT sods_profile_id, sods_profile_name FROM job_profile_sods");
+                    $jobProfile = DB::select("SELECT sods_profile_id, profile_name FROM job_profile_sods");
                 }
                 else if($school == "School of Digital Marketing")
                 {
-                    $jobProfile = DB::select("SELECT sodm_profile_id, sodm_profile_name FROM job_profile_sodm");
+                    $jobProfile = DB::select("SELECT sodm_profile_id, profile_name FROM job_profile_sodm");
                 }
                 else if($school == "School of Fashion Design")
                 {
-                    $jobProfile = DB::select("SELECT sofd_profile_id, sofd_profile_name FROM job_profile_sofd");
+                    $jobProfile = DB::select("SELECT sofd_profile_id, profile_name FROM job_profile_sofd");
                 }
                 else if($school == "School Of Health and Wellness")
                 {
-                    $jobProfile = DB::select("SELECT sow_profile_id, sow_profile_name FROM job_profile_sow");
+                    $jobProfile = DB::select("SELECT sow_profile_id, profile_name FROM job_profile_sow");
                 }
                 else if($school == "School of Hospitality and Tourism")
                 {
-                    $jobProfile = DB::select("SELECT soht_profile_id, soht_profile_name FROM job_profile_soht");
+                    $jobProfile = DB::select("SELECT soht_profile_id, profile_name FROM job_profile_soht");
                 }
                 else if($school == "School of Interior Design")
                 {
-                    $jobProfile = DB::select("SELECT soid_profile_id, soid_profile_name FROM job_profile_soid");
+                    $jobProfile = DB::select("SELECT soid_profile_id, profile_name FROM job_profile_soid");
                 }
                 else if($school == "School of Journalism and Mass Communication")
                 {
-                    $jobProfile = DB::select("SELECT sojmc_profile_id, sojmc_profile_name FROM job_profile_sojmc");
+                    $jobProfile = DB::select("SELECT sojmc_profile_id, profile_name FROM job_profile_sojmc");
                 }
                 else if($school == "School of Music")
                 {
-                    $jobProfile = DB::select("SELECT som_profile_id, som_profile_name FROM job_profile_som");
+                    $jobProfile = DB::select("SELECT som_profile_id, profile_name FROM job_profile_som");
                 }
                 else if($school == "School of Still Photography")
                 {
-                    $jobProfile = DB::select("SELECT sosp_profile_id, sosp_profile_name FROM job_profile_sosp");
+                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp");
                 }
                 else if($school == "School of Still Photography")
                 {
-                    $jobProfile = DB::select("SELECT sosp_profile_id, sosp_profile_name FROM job_profile_sosp");
+                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp");
                 }
                 else if($school == "School of Fine Arts")
                 {
-                    $jobProfile = DB::select("SELECT sofa_profile_id, sofa_profile_name FROM job_profile_sofa");
+                    $jobProfile = DB::select("SELECT sofa_profile_id, profile_name FROM job_profile_sofa");
                 }
 
                 $jobType = DB::select("SELECT job_type_id, job_type_name FROM job_type");
@@ -253,51 +254,51 @@ class HomeController extends Controller
                 $careerSupport = DB::select("SELECT career_id, career_name FROM career_support");
                 if($course == "Diploma in Fashion Design")
                 {
-                    $jobProfile = DB::select("SELECT job_fashion_id, job_fashion_name FROM job_fashion");
+                    $jobProfile = DB::select("SELECT job_fashion_id, jobName FROM job_fashion");
                 }
                 else if($course == "Diploma in Jewellery Design")
                 {
-                    $jobProfile = DB::select("SELECT job_jewellery_id, job_jewellery_name FROM job_jewellery");
+                    $jobProfile = DB::select("SELECT job_jewellery_id, jobName FROM job_jewellery");
                 }
                 else if($course == "Diploma in Interior Design")
                 {
-                    $jobProfile = DB::select("SELECT job_interior_id, job_interior_name FROM job_interior");
+                    $jobProfile = DB::select("SELECT job_interior_id, jobName FROM job_interior");
                 }
                 else if($course == "Diploma in Event Management")
                 {
-                    $jobProfile = DB::select("SELECT job_event_id, job_event_name FROM job_event");
+                    $jobProfile = DB::select("SELECT job_event_id, jobName FROM job_event");
                 }
                 else if($course == "Diploma in Music Production")
                 {
-                    $jobProfile = DB::select("SELECT job_music_id, job_music_name FROM job_music");
+                    $jobProfile = DB::select("SELECT job_music_id, jobName FROM job_music");
                 }
                 else if($course == "Diploma in 3D Animation & Visual Effects")
                 {
-                    $jobProfile = DB::select("SELECT job_animation_id, job_animation_name FROM job_animation");
+                    $jobProfile = DB::select("SELECT job_animation_id, jobName FROM job_animation");
                 }
                 else if($course == "Diploma in Nutrition & Dietetics")
                 {
-                    $jobProfile = DB::select("SELECT job_nutrition_id, job_nutrition_name FROM job_nutrition");
+                    $jobProfile = DB::select("SELECT job_nutrition_id, jobName FROM job_nutrition");
                 }
                 else if($course == "Diploma in Hospital Management")
                 {
-                    $jobProfile = DB::select("SELECT job_hospital_id, job_hospital_name FROM job_hospital");
+                    $jobProfile = DB::select("SELECT job_hospital_id, jobName FROM job_hospital");
                 }
                 else if($course == "Diploma in Travel & Tourism")
                 {
-                    $jobProfile = DB::select("SELECT job_travel_id, job_travel_name FROM job_travel");
+                    $jobProfile = DB::select("SELECT job_travel_id, jobName FROM job_travel");
                 }
                 else if($course == "Certificate in Advertising PR & Corporate Communication")
                 {
-                    $jobProfile = DB::select("SELECT job_advertising_id, job_advertising_name FROM job_advertising");
+                    $jobProfile = DB::select("SELECT job_advertising_id, jobName FROM job_advertising");
                 }
                 else if($course == "The Makeup Artist Certification Course")
                 {
-                    $jobProfile = DB::select("SELECT job_makeup_id, job_makeup_name FROM job_makeup");
+                    $jobProfile = DB::select("SELECT job_makeup_id, jobName FROM job_makeup");
                 }
                 else if($course == "The Ultimate Journalism Certificate Program")
                 {
-                    $jobProfile = DB::select("SELECT job_journalism_id, job_journalism_name FROM job_journalism");
+                    $jobProfile = DB::select("SELECT job_journalism_id, jobName FROM job_journalism");
                 }
                 $jobRoles = DB::select("SELECT job_role_id, job_role_name FROM job_role");
                 $jobRelocate = DB::select("SELECT job_relocate_id, job_relocate_name FROM job_relocate");

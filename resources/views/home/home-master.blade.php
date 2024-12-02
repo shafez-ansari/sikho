@@ -101,7 +101,7 @@
                 margin-top: 20px;
             }
             .illustration img {
-                max-width: 100%;
+                max-width: 75%;
                 height: auto;
                 border-radius: 10px;
             }
@@ -156,17 +156,17 @@
         <div class="container">
             <div class="logos">
                 <img src="{{url('/images/AAfTonline.png')}}" alt="AAFT Online">
-                <img src="../images/Aaft.png" alt="AAFT Logo">
-                <img src="../images/University.png" alt="AAFT University Logo">
+                <img src="{{url('/images/Aaft.png')}}" alt="AAFT Logo">
+                <img src="{{url('/images/University.png')}}" alt="AAFT University Logo">
             </div>
             @yield('content')
             <div class="illustration">
                 <div class="row">
                     <div class="col-sm-6">
-                        <img src="images/ill.png" alt="Graduation Illustration 1">
+                        <img src="{{url('/images/ill.png')}}" alt="Graduation Illustration 1">
                     </div>
                     <div class="col-sm-6">
-                        <img src="images/Ill2.png" alt="Graduation Illustration 2">
+                        <img src="{{url('/images/Ill2.png')}}" alt="Graduation Illustration 2">
                     </div>
                 </div>
             </div>

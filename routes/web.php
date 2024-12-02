@@ -48,5 +48,5 @@ Route::get('cro-details', [HomeController::class, 'CRODetails']);
 Route::get('admin-details', [HomeController::class, 'AdminDetails']);
 Route::get('it-details', [HomeController::class, 'ITDetails']);
 
-Route::get('submit-placement', [HomeController::class, 'SubmitPlacement']);
+Route::get('store-placement/{entity}/{school}/{yes}/{no}/{course}', [HomeController::class, 'SubmitPlacement']);
 
