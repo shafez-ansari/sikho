@@ -16,7 +16,7 @@
             padding: 0;
             background-color: #f5f5f5;
         }
-        .header {
+       /* .header {
             background-color: #fff;
             text-align: center;
             padding: 20px;
@@ -25,7 +25,7 @@
         .header img {
             max-height: 60px;
             margin: 0 15px;
-        }
+        }*/
         .container {
             margin-top: 30px;
             text-align: center;
@@ -84,7 +84,7 @@
         <img src="AAfTonline.png" alt="AAFT Online">
         <img src="Aaft.png" alt="AAFT Logo">
         <img src="University.png" alt="AAFT University">
-    </div>
+    </div> 
 
     <div class="container">
         <div class="message-box">
