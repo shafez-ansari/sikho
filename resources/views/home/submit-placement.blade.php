@@ -1,16 +1,10 @@
 @extends('home.home-master')
 
 @section('content')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
-<style>
-    .mult-select-tag ul li {
-        text-align: left;
-    }
-</style>
 
-
-    <form action="" id="entityFormId" method="post" width="100%">
+<form action="" id="entityFormId" width="100%">
         @csrf
+        <input type="hidden" value="{{ $entityName }}" id="hdnEntityName">
         @if($yes == true && ($entityName == "AAFT Noida" || $entityName == "AAFT University"))
         <div class="row form-group">
             <div class="col-md-6">
@@ -31,7 +25,7 @@
                 <label for="jobProfile">I want to work for the job profile.</label>
             </div>
             <div class="col-md-6">
-                <select name="jobProfileId" id="jobProfileId" class="form-control" multiple>
+                <select name="jobProfileId" id="jobProfileId" class="form-control" multiple="multiple">
                 @foreach($jobProfile as $job)
                     <option value="{{$job->profile_name}}">{{$job->profile_name}}</option>
                 @endforeach
@@ -44,8 +38,7 @@
                 <label for="jobType">What job type are you interested in?</label>
             </div>
             <div class="col-md-6">
-                <select name="jobTypeId" id="jobTypeId" class="form-control">
-                    <option value="">--Select--</option>
+                <select name="jobTypeId" id="jobTypeId" class="form-control" multiple="multiple">
                 @foreach($jobType as $job)
                     <option value="{{$job->job_type_id}}">{{$job->job_type_name}}</option>
                 @endforeach
@@ -58,7 +51,7 @@
                 <label for="jobLocation">Preferred Location of Job/Employment?</label>
             </div>
             <div class="col-md-6">
-                <select name="jobLocationId" id="jobLocationId" class="form-control" multiple>
+                <select name="jobLocationId" id="jobLocationId" class="form-control" multiple="multiple">
                 @foreach($empLocation as $loc)
                     <option value="{{$loc->emp_loc_id}}">{{$loc->emp_loc_name}}</option>
                 @endforeach
@@ -93,13 +86,13 @@
         </div>
         <div class="row form-group">
             <div class="col-md-6">
-                <label for="jobType">City</label>
+                <label for="city">City</label>
             </div>
             <div class="col-md-6">
-                <select name="jobTypeId" id="jobTypeId" class="form-control">
+                <select name="cityId" id="cityId" class="form-control">
                     <option value="">--Select--</option>
                 </select>
-                <span class="text-danger" id="jobTypeError"></span>
+                <span class="text-danger" id="cityError"></span>
             </div>
         </div>
         <div class="row form-group">
@@ -173,11 +166,11 @@
             <div class="col-md-6">
                 <div class="col-md-6">
                     <input type="radio" id="yesIntershipExp" name="intershipExp" value="HTML">
-                    <label for="Yes">Yes</label>
+                    <label for="Yes">Yes</label>
                 </div>
                 <div class="col-md-6">
                     <input type="radio" id="noIntershipExp" name="intershipExp" value="HTML">
-                    <label for="No">No</label>
+                    <label for="No">No</label>
                 </div>
                 <span class="text-danger" id="intershipExpError"></span>
             </div>
@@ -189,11 +182,11 @@
             <div class="col-md-6">
                 <div class="col-md-6">
                     <input type="radio" id="yesRelocate" name="relocate" value="HTML">
-                    <label for="Yes">Yes</label>
+                    <label for="Yes">Yes</label>
                 </div>
                 <div class="col-md-6">
                     <input type="radio" id="noRelocate" name="relocate" value="HTML">
-                    <label for="No">No</label>
+                    <label for="No">No</label>
                 </div>
                 <span class="text-danger" id="relocateError"></span>
             </div>
@@ -229,20 +222,148 @@
         @endif
         <div class="row form-group">
             <div class="col-md-6">
-                <button type="submit" class="btn btn-primary" onclick="submitQuestionarie()">Submit</button>
+                <button type="submit" id="submitQuestionId" class="btn btn-primary" onclick="submitQuestionarie()">Submit</button>
             </div>
         </div>
     </form>
 
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        new MultiSelectTag('jobProfileId')
-        new MultiSelectTag('jobLocationId')
+        $('#jobProfileId').multiselect({
+            numberDisplayed: 1,
+            enableFiltering: true
+
+        });
+        $('#jobTypeId').multiselect({
+            numberDisplayed: 1,
+            enableFiltering: true
+        });
+        $('#jobLocationId').multiselect({
+            numberDisplayed: 1,
+            enableFiltering: true
+        });
+        $("#jobRoleId").multiselect({
+            numberDisplayed: 1,
+            enableFiltering: true
+        });
     });
 
+    function submitQuestionarie() {
+        debugger;
+        academicQual = $("#qualId").val();
+        jobProfile = $("#jobProfileId").val();
+        jobType = $("#jobTypeId").val();
+        jobLocation = $("#jobLocationId").val();
+        workExp = $("#workExp").val();
+        state = $("#stateId").val();
+        city = $("#city").val();
+        empStatus = $("#empStatusId").val();
+        careerSupport = $("#careerSupportId").val();
+        technicalSkill = $("#technicalSkill").val();
+        jobRole = $("#jobRoleId").val();
+        preferedJob = $("input[name='intershipExp']").val();
+        relocate = $("input[name='relocate']").val();
+        jobPlace = $("#stateRelocateId").val();
+        workType = $("#workTypeId").val();
+
+        entityName = $("#hdnEntityName").val();
+        if(entityName == "AAFT Noida" || entityName == "AAFT University"){
+            if(academicQual == "") {
+                $("#qualError").empty().text('Please select academic qualification');
+            }
+            else {
+                $("#qualError").empty().text('');
+            }
+
+            if(jobProfile == null) {
+                $("#jobProfileError").empty().text('Please select job profile');
+            }
+            else if(jobProfile.length > 3) {
+                $("#jobProfileError").empty().text('Please select maximum of 2 job profile');
+            }
+            else {
+                $("#jobProfileError").empty().text('');
+            }
+
+            if(jobType == null) {
+                $("#jobTypeError").empty().text('Please select job type');
+            }
+            else if(jobType.length > 3) {
+                $("#jobTypeError").empty().text('Please select maximim of 2 job type');
+            }
+            else {
+                $("#jobTypeError").empty().text('');
+            }
+
+            if(jobLocation == null) {
+                $("#jobLocationError").empty().text('Please select job location');
+            }
+            else if (jobLocation.length > 3) {
+                $("#jobLocationError").empty().text('Please select maximum of 2 job location.');
+            }
+            else {
+                $("#jobLocationError").empty().text('');
+            }
+
+            if(workExp == "") {
+                $("#workExpError").empty().text('Please enter the work experience');
+            }
+            else {
+                $("#workExpError").empty().text('');
+            }
+
+            if($("#qualError").text() != "" || $("#jobProfileError").text() != "" || $("#jobTypeError").text() != "" || $("#workExpError").text() != "") { 
+                document.getElementById("submitQuestionId").addEventListener("click", function (event) {
+                    event.preventDefault();
+                });
+            }
+        }
+
+        else if(entity == "AAFT Online"){
+            if(state == "" && state != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(city == "" && city != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(empStatus == "" && empStatus != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(careerSupport == "" && careerSupport != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(technicalSkill == "" && technicalSkill != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(jobRole == "" && jobRole != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(preferedJob == "" && preferedJob != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(relocate == "" && relocate != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(jobPlace == "" && jobPlace != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            if(workType == "" && workType != undefined) {
+                $("#jobProfileError").empty().text();
+            }
+
+            $("#entityFormId").on("submit", function (e) {
+                e.preventDefault();
+            });
+        }
+    }
 </script>
 @endsection
