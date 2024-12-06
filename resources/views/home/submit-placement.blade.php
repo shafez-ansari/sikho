@@ -5,7 +5,8 @@
 <form action="" id="entityFormId" width="100%">
         @csrf
         <input type="hidden" value="{{ $entityName }}" id="hdnEntityName">
-        @if($yes == true && ($entityName == "AAFT Noida" || $entityName == "AAFT University"))
+        @if($yes == true)
+            @if($entityName == "AAFT Noida" || $entityName == "AAFT University")
         <div class="row form-group">
             <div class="col-md-6">
                 <label for="">Your last completed academic qualification.</label>
@@ -68,8 +69,7 @@
                 <span class="text-danger" id="workExpError"></span>
             </div>
         </div>
-        @endif
-        @if($yes == true && ($entityName == "AAFT Online"))
+        @elseif($entityName == "AAFT Online")
         <div class="row form-group">
             <div class="col-md-6">
                 <label for="state">State</label>
@@ -218,11 +218,25 @@
                 </select>
                 <span class="text-danger" id="workTypeError"></span>
             </div>
-        </div>   
+        </div>
+        @endif   
+        @elseif($yes != true)
+            <div class="row form-group">
+                <div class="col-md-6">
+                    <label for="notPlacement">Reason for not looking for placement.</label>
+                </div>
+                <div class="col-md-6">
+                    <select name="notPlacement" id="notPlacement">
+                        @foreach($reasonNotPlacing as $reason)
+                            <option value="{{$not_placement_id}}">{{$not_placement_name}}</option>    
+                        @endforeach
+                    </select>
+                </div>
+            </div>
         @endif
         <div class="row form-group">
             <div class="col-md-6">
-                <button type="submit" id="submitQuestionId" class="btn btn-primary" onclick="submitQuestionarie()">Submit</button>
+                <div id="submitQuestionId" class="btn btn-primary" onclick="submitQuestionarie()">Submit</div>
             </div>
         </div>
     </form>
@@ -312,7 +326,7 @@
                 $("#workExpError").empty().text('');
             }
 
-            if($("#qualError").text() != "" || $("#jobProfileError").text() != "" || $("#jobTypeError").text() != "" || $("#workExpError").text() != "") { 
+            if($("#qualError").text() != "" && $("#jobProfileError").text() != "" && $("#jobTypeError").text() != "" && $("#workExpError").text() != "") { 
                 document.getElementById("submitQuestionId").addEventListener("click", function (event) {
                     event.preventDefault();
                 });

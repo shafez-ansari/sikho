@@ -183,68 +183,68 @@ class HomeController extends Controller
 
         if($yes == true )
         {
-            $academicQual = DB::select("SELECT qualification_id, qualification_name FROM academic_qualification");
+            $academicQual = DB::select("SELECT qualification_id, qualification_name FROM academic_qualification WHERE active = 1");
             if($entityName == "AAFT Noida" || $entityName == "AAFT University")
             {                  
                 if($school == "School of Animation")
                 {
-                    $jobProfile = DB::select("SELECT soa_profile_id, profile_name FROM job_profile_soa");
+                    $jobProfile = DB::select("SELECT soa_profile_id, profile_name FROM job_profile_soa WHERE active = 1");
                 }
                 else if($school == "School of Cinema")
                 {
-                    $jobProfile = DB::select("SELECT soc_profile_id, profile_name FROM job_profile_soc");
+                    $jobProfile = DB::select("SELECT soc_profile_id, profile_name FROM job_profile_soc WHERE active = 1");
                 }
                 else if($school == "School of Advertising, PR and Events")
                 {
-                    $jobProfile = DB::select("SELECT soapre_profile_id, profile_name FROM job_profile_soapre");
+                    $jobProfile = DB::select("SELECT soapre_profile_id, profile_name FROM job_profile_soapre WHERE active = 1");
                 }
                 else if($school == "School of Data Science")
                 {
-                    $jobProfile = DB::select("SELECT sods_profile_id, profile_name FROM job_profile_sods");
+                    $jobProfile = DB::select("SELECT sods_profile_id, profile_name FROM job_profile_sods WHERE active = 1");
                 }
                 else if($school == "School of Digital Marketing")
                 {
-                    $jobProfile = DB::select("SELECT sodm_profile_id, profile_name FROM job_profile_sodm");
+                    $jobProfile = DB::select("SELECT sodm_profile_id, profile_name FROM job_profile_sodm WHERE active = 1");
                 }
                 else if($school == "School of Fashion Design")
                 {
-                    $jobProfile = DB::select("SELECT sofd_profile_id, profile_name FROM job_profile_sofd");
+                    $jobProfile = DB::select("SELECT sofd_profile_id, profile_name FROM job_profile_sofd WHERE active = 1");
                 }
                 else if($school == "School Of Health and Wellness")
                 {
-                    $jobProfile = DB::select("SELECT sow_profile_id, profile_name FROM job_profile_sow");
+                    $jobProfile = DB::select("SELECT sow_profile_id, profile_name FROM job_profile_sow WHERE active = 1");
                 }
                 else if($school == "School of Hospitality and Tourism")
                 {
-                    $jobProfile = DB::select("SELECT soht_profile_id, profile_name FROM job_profile_soht");
+                    $jobProfile = DB::select("SELECT soht_profile_id, profile_name FROM job_profile_soht WHERE active = 1");
                 }
                 else if($school == "School of Interior Design")
                 {
-                    $jobProfile = DB::select("SELECT soid_profile_id, profile_name FROM job_profile_soid");
+                    $jobProfile = DB::select("SELECT soid_profile_id, profile_name FROM job_profile_soid WHERE active = 1");
                 }
                 else if($school == "School of Journalism and Mass Communication")
                 {
-                    $jobProfile = DB::select("SELECT sojmc_profile_id, profile_name FROM job_profile_sojmc");
+                    $jobProfile = DB::select("SELECT sojmc_profile_id, profile_name FROM job_profile_sojmc WHERE active = 1");
                 }
                 else if($school == "School of Music")
                 {
-                    $jobProfile = DB::select("SELECT som_profile_id, profile_name FROM job_profile_som");
+                    $jobProfile = DB::select("SELECT som_profile_id, profile_name FROM job_profile_som WHERE active = 1");
                 }
                 else if($school == "School of Still Photography")
                 {
-                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp");
+                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp WHERE active = 1");
                 }
                 else if($school == "School of Still Photography")
                 {
-                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp");
+                    $jobProfile = DB::select("SELECT sosp_profile_id, profile_name FROM job_profile_sosp WHERE active = 1");
                 }
                 else if($school == "School of Fine Arts")
                 {
-                    $jobProfile = DB::select("SELECT sofa_profile_id, profile_name FROM job_profile_sofa");
+                    $jobProfile = DB::select("SELECT sofa_profile_id, profile_name FROM job_profile_sofa WHERE active = 1");
                 }
 
-                $jobType = DB::select("SELECT job_type_id, job_type_name FROM job_type");
-                $empLocation = DB::select("SELECT emp_loc_id, emp_loc_name FROM employment_location");
+                $jobType = DB::select("SELECT job_type_id, job_type_name FROM job_type WHERE active = 1");
+                $empLocation = DB::select("SELECT emp_loc_id, emp_loc_name FROM employment_location WHERE active = 1");
             }
             else if($entityName == "AAFT Online")
             {
@@ -307,9 +307,9 @@ class HomeController extends Controller
         }
         else if($no == true)
         {
-            $reasonNotPlacing = DB::select("SELECT questionarie_no_id, fk_placement_no_id FROM questionarie_no");
+            $reasonNotPlacing = DB::select("SELECT not_placement_id, not_placement_name FROM not_placement WHERE active = 1");
         }
         return view('home.submit-placement', compact(['entityName', 'school', 'course', 'jobProfile', 'academicQual', 'jobType', 'empLocation', 'state', 'city',
-        'empStatus', 'careerSupport', 'reasonNotPlacing', 'jobRoles', 'jobRelocate', 'workType', 'reasonNotPlacing', 'yes', 'no']));
+        'empStatus', 'careerSupport', 'jobRoles', 'jobRelocate', 'workType', 'reasonNotPlacing', 'yes', 'no']));
     }
 }

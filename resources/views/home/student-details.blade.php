@@ -169,6 +169,7 @@
         } else if (!yesChecked && !noChecked) {
             errorElement.textContent = "Please select either Yes or No.";
         } else {
+            debugger;
             let url = `/store-placement/${entity}/${school}/${yes}/${no}/${course}`;
             window.location.href = url;
             // You can redirect or send an AJAX request here
