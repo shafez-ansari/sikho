@@ -181,7 +181,7 @@ class HomeController extends Controller
         $workType = "";
         $reasonNotPlacing = "";
 
-        if($yes == true )
+        if($yes == 1 )
         {
             $academicQual = DB::select("SELECT qualification_id, qualification_name FROM academic_qualification WHERE active = 1");
             if($entityName == "AAFT Noida" || $entityName == "AAFT University")
@@ -305,7 +305,7 @@ class HomeController extends Controller
                 $workType = DB::select("SELECT work_type_id, work_type_name FROM work_type");
             }   
         }
-        else if($no == true)
+        else if($no == 1)
         {
             $reasonNotPlacing = DB::select("SELECT not_placement_id, not_placement_name FROM not_placement WHERE active = 1");
         }

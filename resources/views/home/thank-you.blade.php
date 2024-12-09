@@ -94,8 +94,6 @@
             <!-- Greeting -->
             <p>Dear Vijender</p>
 
-            
-
             <!-- Unique ID Box -->
             <div class="unique-id-box">
                 Unique ID: AOLTHSM122314599

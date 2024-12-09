@@ -5,7 +5,12 @@
 <form action="" id="entityFormId" width="100%">
         @csrf
         <input type="hidden" value="{{ $entityName }}" id="hdnEntityName">
-        @if($yes == true)
+        <input type="hidden" value="{{ $yes }}" id="hdnYes">
+        <input type="hidden" value="{{ $no }}" id="hdnNo">
+        <input type="hidden" value="{{ $school }}" id="hdnSchool">
+        <input type="hidden" value="{{ $course }}" id="hdnCourse">
+
+        @if($yes == 1)
             @if($entityName == "AAFT Noida" || $entityName == "AAFT University")
         <div class="row form-group">
             <div class="col-md-6">
@@ -220,17 +225,28 @@
             </div>
         </div>
         @endif   
-        @elseif($yes != true)
+        @elseif($yes != 1)
             <div class="row form-group">
                 <div class="col-md-6">
-                    <label for="notPlacement">Reason for not looking for placement.</label>
+                    <label for="notPlacementId">Reason for not looking for placement.</label>
                 </div>
                 <div class="col-md-6">
-                    <select name="notPlacement" id="notPlacement">
+                    <select name="notPlacementId" id="notPlacementId" class="form-control" onchange = "notPlacement()">
+                            <option value="">--Select--</option>
                         @foreach($reasonNotPlacing as $reason)
-                            <option value="{{$not_placement_id}}">{{$not_placement_name}}</option>    
+                            <option value="{{$reason->not_placement_id}}">{{$reason->not_placement_name}}</option>    
                         @endforeach
                     </select>
+                    <span class="text-danger" id="notPlacementError"></span>
+                </div>
+            </div>
+            <div class="row form-group" id="intervalDiv" style="display:none">
+                <div class="col-md-6">
+                    <label for="intervalId">Duration <b class="text-danger">*</b></label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" id="intervalId" name="intervalId" class="form-control" />  
+                    <span id="intervalError" class="text-danger"></span>
                 </div>
             </div>
         @endif
@@ -281,6 +297,11 @@
         workType = $("#workTypeId").val();
 
         entityName = $("#hdnEntityName").val();
+        yes = $("#hdnYes").val();
+        no = $("#hdnNo").val();
+        school = $("#hdnSchool").val();
+        course = $("#hdnCourse").val();
+
         if(entityName == "AAFT Noida" || entityName == "AAFT University"){
             if(academicQual == "") {
                 $("#qualError").empty().text('Please select academic qualification');
@@ -331,52 +352,157 @@
                     event.preventDefault();
                 });
             }
+            else {
+                $.ajax({
+                    type:'post',
+                    url: "/submit-questionarie",
+                    data: {'academicQual': academicQual, 'jobProfile': jobProfile, 'jobType':jobType, 'jobLocation':jobLocation, 'workExp':workExp, 'yes': yes, 'no', 'school': school, 'course': course, 'entity':entity },
+                    success:function(data){
+                        
+                    }
+                });
+            }
         }
 
         else if(entity == "AAFT Online"){
             if(state == "" && state != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#stateIdError").empty().text('Please select the state');
+            }
+            else {
+                $("#stateIdError").empty().text('');
             }
 
             if(city == "" && city != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#cityError").empty().text('Please select the city');
+            }
+            else {
+                $("#cityError").empty().text('');
+            }
+
+            if(academicQual == "") {
+                $("#qualError").empty().text('Please select academic qualification');
+            }
+            else {
+                $("#qualError").empty().text('');
             }
 
             if(empStatus == "" && empStatus != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#empStatusError").empty().text('Please select current employment status');
+            }
+            else {
+                $("#empStatusError").empty().text('');
             }
 
             if(careerSupport == "" && careerSupport != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#careerSupportError").empty().text('Please select career support');
+            }
+            else {
+                $("#careerSupportError").empty().text('');
             }
 
             if(technicalSkill == "" && technicalSkill != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#technicalSkillError").empty().text('Please enter your technical skills');
+            }
+            else {
+                $("#technicalSkillError").empty().text('');
             }
 
             if(jobRole == "" && jobRole != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#jobRoleError").empty().text('Please select maximum of 2 job role');
+            }
+            else {
+                $("#jobRoleError").empty().text('');
             }
 
             if(preferedJob == "" && preferedJob != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#intershipExpError").empty().text('Please select prefered job role');
+            }
+            else {
+                $("#intershipExpError").empty().text('');
             }
 
             if(relocate == "" && relocate != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#relocateError").empty().text('Please select willingness to relocate');
+            }
+            else {
+                $("#relocateError").empty().text('');
             }
 
             if(jobPlace == "" && jobPlace != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#stateRelocateIdError").empty().text('Please select preferred job location');
+            }
+            else {
+                $("#stateRelocateIdError").empty().text('');
             }
 
             if(workType == "" && workType != undefined) {
-                $("#jobProfileError").empty().text();
+                $("#workTypeError").empty().text('Please select preferred work type');
+            }
+            else {
+                $("#workTypeError").empty().text('');
             }
 
-            $("#entityFormId").on("submit", function (e) {
-                e.preventDefault();
-            });
+            if($("#stateIdError").text() != "" && $("#cityError").text() != "" && $("#qualError").text() != "" && $("#empStatusError").text() != "" && $("#careerSupportError").text() != "" && $("#technicalSkillError").text() != "" && $("#jobRoleError").text() != ""
+                && $("#intershipExpError").text() != "" && $("#relocateError").text() != "" && $("#stateRelocateIdError").text() != "" && $("#workTypeError").text() != "") { 
+                document.getElementById("submitQuestionId").addEventListener("click", function (event) {
+                    event.preventDefault();
+                });
+            }
+            else {
+                $.ajax({
+                    type:'post',
+                    url: "/submit-questionarie",
+                    data: {'state': state, 'city': city, 'academicQual':academicQual, 'empStatus':empStatus, 'careerSupport':careerSupport, 'technicalSkill':technicalSkill, 'jobRole':jobRole, 'preferedJob': preferedJob, 'relocate':relocate, 'jobPlace':jobPlace, 'workType':workType, 'entity':entity, 'school':school, 'course': course, 'yes':yes, 'no':no },
+                    success:function(data){
+                        
+                    }
+                });
+            }
+        }
+        else if($hdnYes != 1) {
+            notPlacement = $("#notPlacementId").val();
+            interval = $("#intervalId").val();
+
+            if($("#notPlacementId option:selected").text() == "Seeking after an Interval" && interval == ""){
+                $("#intervalError").empty().text('Please enter the duration');
+            }
+            else {
+                $("#intervalError").empty().text('');
+            }
+
+            if(notPlacement == "") {
+                $("#notPlacementError").empty().text('Please select a reason for not looking for placement.');
+            }
+            else{
+                $("#notPlacementError").empty().text('');
+            }
+
+            if($("#intervalError").text() != "" && $("#notPlacementError").text() != "") { 
+                document.getElementById("submitQuestionId").addEventListener("click", function (event) {
+                    event.preventDefault();
+                });
+            }
+            else {
+                $.ajax({
+                    type:'post',
+                    url: "/submit-questionarie",
+                    data: {'notPlacement': notPlacement, 'interval': interval, 'entity': entity, 'course': course, 'school': school, 'yes':yes, 'no': no },
+                    success: function(data){
+                        
+                    }
+                });
+            }
+
+        }
+    }
+
+    function notPlacement() {
+        debugger;
+        if($("#notPlacementId option:selected").text() == "Seeking after an Interval"){
+            $("#intervalDiv").show();
+        }
+        else {
+            $("#intervalDiv").hide();
         }
     }
 </script>

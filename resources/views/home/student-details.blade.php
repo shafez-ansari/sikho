@@ -150,16 +150,16 @@
         school = document.getElementById('hdnSchool').value;
         course = document.getElementById('hdnCourse').value;
         if ($('#yes').is(':checked')) {
-            yes = true;
+            yes = 1;
         }
         else {
-            yes = false;
+            yes = 0;
         }
         if ($('#no').is(':checked')) {
-            no = true;
+            no = 1;
         }
         else {
-            no = false;
+            no = 0;
         }
         // Reset error
         errorElement.textContent = '';
