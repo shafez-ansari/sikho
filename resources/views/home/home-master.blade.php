@@ -37,7 +37,7 @@
                 max-width: 900px;
                 margin: 30px auto;
                 padding: 15px;
-                text-align: center;
+                text-align: inherit;
                 background-color: #fff;
                 border-radius: 10px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -65,7 +65,9 @@
                 margin-bottom: 20px;
             }
             form {
+                padding-top: 30px;
                 display: flex;
+                flex-direction: column;
                 flex-wrap: wrap;
                 justify-content: space-between;
                 gap: 15px;
@@ -116,6 +118,11 @@
                 color: #888;
                 text-align: center;
             }
+            .btn-primary {
+    color: #fff;
+    background-color: #d10505;
+    border-color: #ff0000;
+}
             /* Responsive Design */
             @media screen and (max-width: 768px) {
                 .container {

@@ -309,7 +309,18 @@ class HomeController extends Controller
         {
             $reasonNotPlacing = DB::select("SELECT not_placement_id, not_placement_name FROM not_placement WHERE active = 1");
         }
+
         return view('home.submit-placement', compact(['entityName', 'school', 'course', 'jobProfile', 'academicQual', 'jobType', 'empLocation', 'state', 'city',
         'empStatus', 'careerSupport', 'jobRoles', 'jobRelocate', 'workType', 'reasonNotPlacing', 'yes', 'no']));
+    }
+
+    public function SubmitQuestionarie(Request $req)
+    {
+        return response()->json(["thankyou" => url("thankYou")]);
+    }
+
+    public function ThankYou()
+    {
+        return view('home.thank-you');
     }
 }

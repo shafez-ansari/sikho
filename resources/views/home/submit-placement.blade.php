@@ -16,6 +16,7 @@
             <div class="col-md-6">
                 <label for="">Your last completed academic qualification.</label>
             </div> 
+            <break>
             <div class="col-md-6">
                 <select name="qualId" id="qualId" class="form-control">
                         <option value="">--Select--</option>
@@ -30,6 +31,7 @@
             <div class="col-md-6">
                 <label for="jobProfile">I want to work for the job profile.</label>
             </div>
+            <break>
             <div class="col-md-6">
                 <select name="jobProfileId" id="jobProfileId" class="form-control" multiple="multiple">
                 @foreach($jobProfile as $job)
@@ -251,8 +253,8 @@
             </div>
         @endif
         <div class="row form-group">
-            <div class="col-md-6">
-                <div id="submitQuestionId" class="btn btn-primary" onclick="submitQuestionarie()">Submit</div>
+            <div class="col-md-6"> 
+                <div id="submitQuestionId"  class="btn btn-primary" onclick="submitQuestionarie()">Submit</div> 
             </div>
         </div>
     </form>
@@ -354,16 +356,18 @@
             }
             else {
                 $.ajax({
-                    type:'post',
+                    type:'get',
                     url: "/submit-questionarie",
-                    data: {'academicQual': academicQual, 'jobProfile': jobProfile, 'jobType':jobType, 'jobLocation':jobLocation, 'workExp':workExp, 'yes': yes, 'no', 'school': school, 'course': course, 'entity':entity },
+                    data: {'academicQual': academicQual, 'jobProfile': jobProfile, 'jobType':jobType, 'jobLocation':jobLocation, 'workExp':workExp, 'yes': yes, 'no':no, 'school': school, 'course': course, 'entity':entityName },
                     success:function(data){
-                        
+                        debugger;
+                        if(data['thankyou'] != ""){
+                            window.location = data['thankyou'];
+                        }
                     }
                 });
             }
         }
-
         else if(entity == "AAFT Online"){
             if(state == "" && state != undefined) {
                 $("#stateIdError").empty().text('Please select the state');
@@ -450,11 +454,13 @@
             }
             else {
                 $.ajax({
-                    type:'post',
+                    type:'get',
                     url: "/submit-questionarie",
-                    data: {'state': state, 'city': city, 'academicQual':academicQual, 'empStatus':empStatus, 'careerSupport':careerSupport, 'technicalSkill':technicalSkill, 'jobRole':jobRole, 'preferedJob': preferedJob, 'relocate':relocate, 'jobPlace':jobPlace, 'workType':workType, 'entity':entity, 'school':school, 'course': course, 'yes':yes, 'no':no },
+                    data: {'state': state, 'city': city, 'academicQual':academicQual, 'empStatus':empStatus, 'careerSupport':careerSupport, 'technicalSkill':technicalSkill, 'jobRole':jobRole, 'preferedJob': preferedJob, 'relocate':relocate, 'jobPlace':jobPlace, 'workType':workType, 'entity':entityName, 'school':school, 'course': course, 'yes':yes, 'no':no },
                     success:function(data){
-                        
+                        if(data != ""){
+                            window.location = data['thankyou'];
+                        }
                     }
                 });
             }
@@ -484,11 +490,13 @@
             }
             else {
                 $.ajax({
-                    type:'post',
+                    type:'get',
                     url: "/submit-questionarie",
-                    data: {'notPlacement': notPlacement, 'interval': interval, 'entity': entity, 'course': course, 'school': school, 'yes':yes, 'no': no },
+                    data: {'notPlacement': notPlacement, 'interval': interval, 'entity': entityName, 'course': course, 'school': school, 'yes':yes, 'no': no },
                     success: function(data){
-                        
+                        if(data != ""){
+                            window.location = data['thankyou'];
+                        }
                     }
                 });
             }
