@@ -316,6 +316,83 @@ class HomeController extends Controller
 
     public function SubmitQuestionarie(Request $req)
     {
+        
+        if($req->yes == 1)
+        {
+            $academicQual = $req->academicQual;
+            $entity = $req->entity;
+            $course = $req->course;
+            $school = $req->school;                
+            $entityId = DB::table('entity')->where('entity_name', '=', $entity)->value('entity_id');
+            $schoolId = DB::table('school')->where('school_name', '=', $entity)->value('school_code');
+            $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
+
+            if($req->entity == "AAFT Noida" || $req->entity == "AAFT University")
+            {
+                $jobProfile = $req->jobProfile;
+                $jobType = $req->jobType;
+                $jobLocation = $req->jobLocation;
+                $workExp = $req->workExp;
+                //$empLocId = $req->
+                $entity = $req->entity;
+                $course = $req->course;
+                $school = $req->school;                
+                $entityId = DB::table('entity')->where('entity_name', '=', $entity)->value('entity_id');
+                $schoolId = DB::table('school')->where('school_name', '=', $entity)->value('school_code');
+                $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
+                DB::table('offline_questionarie')->insert([
+                    'fk_qualifcation_id' => $academicQual,
+                    'fk_user_id' => $userId,
+                    'fk_job_type_id' => $jobType,
+                    'job_profile' => $jobProfile,
+                    'fk_entity_id' => $entityId,
+                    'fk_school_id' => $schoolId,
+                    'fk_emp_loc_id' => $jobLocation,
+                    'work_exp' => $workExp,
+                    'created_by' => session('email'),
+                    'updated_by' => session('email'),
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1   
+                ]);
+            }
+            else if($entityName == "AAFT Online")
+            {
+                $state = $req->state;
+                $city = $req->city;
+                $empStatus = $req->empStatus;
+                $careerSupport = $req->careerSupport;
+                $technicalSkill = $req->technicalSkill;
+                $jobRole = $req->jobRole;
+                $preferedJob = $req->preferedJob;
+                $relocate = $req->relocate;
+                $jobPlace = $req->jobPlace;
+                $workType = $req->workType;
+                DB::table('online_questionarie_yes')->insert([
+                    'fk_state_id' => $state,
+                    'fk_city_id' => $city,
+                    'fk_qualification_id' => $academicQual,
+                    'fk_employment_status_id' => $empStatus,
+                    'fk_career_id' => $careerSupport,
+                    'technical_skill' => $technicalSkill,
+                    'job_role' => $jobRole,
+                    'relevant_job' => $preferedJob,
+                    'relocate' => $relocate,
+                    'fk_emp_loc_id' => $jobPlace,
+                    'fk_work_type_id' => $workType,
+                    'fk_user_id' => $userId,
+                    'created_by' => session('email'),
+                    'updated_by' => session('email'),
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1   
+                ]);
+            }
+        }
+        else 
+        {
+            
+        }
         return response()->json(["thankyou" => url("thankYou")]);
     }
 

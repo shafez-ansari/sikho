@@ -74,6 +74,7 @@
             }
             input[type="email"], input[type="number"] {
                 width: 100%;
+                height: 40px;
                 padding: 10px;
                 border: 1px solid #000;
                 border-radius: 5px;
