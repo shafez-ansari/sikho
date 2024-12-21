@@ -92,11 +92,11 @@
             <a href="#" class="close-btn" onclick="window.history.back();">&times;</a>
 
             <!-- Greeting -->
-            <p>Dear Vijender</p>
+            <p>Dear {{ $fullName }}</p>
 
             <!-- Unique ID Box -->
             <div class="unique-id-box">
-                Unique ID: AOLTHSM122314599
+                Unique ID: {{ $uniqueId }}
             </div>
             
               <br>

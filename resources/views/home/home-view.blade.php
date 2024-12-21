@@ -13,8 +13,7 @@
                     <input type="email" name="loginEmail" class="form-control" id="loginEmail" placeholder="Email">
                     <a class="button vrf-btn" style="position:absolute; right: 20px; bottom: 10px; color: #ff0000; text-decoration: none; cursor:pointer;" id="verifyBtn" onclick="verifyOtp()">Verify</a>
                 </div>
-
-                <break>
+                
                 <span class="text-danger" id="emailError"></span>
                 
             </div>

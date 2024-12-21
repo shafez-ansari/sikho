@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CROController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +46,7 @@ Route::get('resend-otp', [HomeController::class, 'ResendOtp']);
 Route::get('submit-otp', [HomeController::class, 'SubmitOtp']);
 
 Route::get('student-details', [HomeController::class, 'StudentDetails']);
-Route::get('cro-details', [HomeController::class, 'CRODetails']);
+Route::get('cro-details', [CROController::class, 'CRODetails']);
 Route::get('admin-details', [HomeController::class, 'AdminDetails']);
 Route::get('it-details', [HomeController::class, 'ITDetails']);
 
