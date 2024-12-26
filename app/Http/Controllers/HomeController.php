@@ -78,7 +78,7 @@ class HomeController extends Controller
             foreach($userList as $user)
             {
                 $roleId = $user->fk_role_id;
-                session()->put('email', $user->email);
+                session()->put('username', $user->email);
                 
             }
 

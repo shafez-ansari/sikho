@@ -35,6 +35,11 @@ class CROController extends Controller
         return view('cro.dashboard', compact(['userList']));
     }
 
+    public function BulkUpload()
+    {
+        return view('cro.bulk');
+    }
+
     public function OnlineQuestionarie()
     {
         $onlineQuestionarieList = DB::select("SELECT s.state_name, c.city_name, a.qualification_name, cs.career_name, oqy.technical_skill, oqy.job_role, oqy.relevant_job, oqy.relevant_job, el.emp_loc_name,

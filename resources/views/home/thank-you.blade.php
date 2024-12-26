@@ -80,11 +80,7 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="AAfTonline.png" alt="AAFT Online">
-        <img src="Aaft.png" alt="AAFT Logo">
-        <img src="University.png" alt="AAFT University">
-    </div> 
+
 
     <div class="container">
         <div class="message-box">
