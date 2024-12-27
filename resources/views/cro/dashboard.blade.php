@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             max-width: 1600px;
@@ -48,11 +49,6 @@
             margin-right: 10px;
         }
 
-        element.style {
-            text-align: center;
-            font-size: 12px;
-        }
-
         /* Sticky Header */
         .table-responsive {
             max-height: 500px; /* Set height for scrollable table */
@@ -80,7 +76,7 @@
         <!-- Form Section -->
         <div class="card mb-3">
             <div class="card-header bg-dark text-white">
-                Data
+                View Student Data
             </div>
             <div class="card-body">
                 <form class="row g-3">
@@ -119,8 +115,11 @@
                             <option value="No">No</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Submit</button>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="submit" class="btn btn-success w-100 me-2">Submit</button>
+                        <button class="btn btn-danger">
+                            <i class="bi bi-file-earmark-excel"></i> <!-- Excel Icon -->
+                        </button>
                     </div>
                 </form>
             </div>
