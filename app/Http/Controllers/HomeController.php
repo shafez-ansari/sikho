@@ -78,7 +78,7 @@ class HomeController extends Controller
             foreach($userList as $user)
             {
                 $roleId = $user->fk_role_id;
-                session()->put('email', $user->email);
+                session()->put('username', $user->email);
                 
             }
 
@@ -157,7 +157,7 @@ class HomeController extends Controller
                                 LEFT JOIN courses c ON c.course_id = u.fk_course_id
                                 LEFT JOIN program p ON p.program_id = u.fk_program_id
                                 LEFT JOIN user_image ui on ui.fk_user_id = u.user_id
-                                WHERE u.email = ?", [session('email')]);
+                                WHERE u.email = ?", [session('username')]);
 
         return view('home.student-details', compact(['userList']));
     }
@@ -360,8 +360,8 @@ class HomeController extends Controller
                     'fk_school_id' => $schoolId,
                     'fk_emp_loc_id' => $jobLocation,
                     'work_exp' => $workExp,
-                    'created_by' => session('email'),
-                    'updated_by' => session('email'),
+                    'created_by' => session('username'),
+                    'updated_by' => session('username'),
                     'created_date' => now(),
                     'updated_date' => now(),
                     'active' => 1   
@@ -392,8 +392,8 @@ class HomeController extends Controller
                     'fk_emp_loc_id' => $jobPlace,
                     'fk_work_type_id' => $workType,
                     'fk_user_id' => $userId,
-                    'created_by' => session('email'),
-                    'updated_by' => session('email'),
+                    'created_by' => session('username'),
+                    'updated_by' => session('username'),
                     'created_date' => now(),
                     'updated_date' => now(),
                     'active' => 1   
@@ -408,8 +408,8 @@ class HomeController extends Controller
                 'fk_placement_no_id' => $notPlacement,
                 'fk_user_id' => $userId,
                 'interval' => $interval,
-                'created_by' => session('email'),
-                'updated_by' => session('email'),
+                'created_by' => session('username'),
+                'updated_by' => session('username'),
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1   
