@@ -2,7 +2,6 @@
 
 @section('cro-content')
 
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
@@ -63,8 +62,7 @@
             color: white;
         }
     </style>
-</head>
-<body>
+
     <div class="container mt-3">
         <!-- Top Buttons -->
         <div class="d-flex justify-content-between mb-3">
@@ -81,42 +79,37 @@
             <div class="card-body">
                 <form class="row g-3">
                     <div class="col-md-2">
-                        <select class="form-select" aria-label="Select Entity">
-                            <option selected>Select Entity</option>
-                            <option value="1">Entity 1</option>
-                            <option value="2">Entity 2</option>
+                        <select class="form-select" id="entity" name="entity" aria-label="Select Entity" onchange="getSchoolList()">
+                            <option selected value="">Select Entity</option>
+                            @foreach($entityList as $entity)
+                                <option value="{{ $entity->entity_id }}">{{ $entity->entity_name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-select" aria-label="Select School">
-                            <option selected>School</option>
-                            <option value="1">School 1</option>
-                            <option value="2">School 2</option>
+                        <select class="form-select" id="school" name="school" aria-label="Select School" onchange="getCourseList()">
+                            <option selected value="">Select School</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-select" aria-label="Program Code">
-                            <option selected>Program Code</option>
-                            <option value="HSM">HSM</option>
-                            <option value="LTM">LTM</option>
+                        <select class="form-select" id="course" name="course" aria-label="Select Course">
+                            <option selected value="">Select Course</option>
+                            
                         </select>
                     </div>
+                    
                     <div class="col-md-2">
-                        <select class="form-select" aria-label="Batch Code">
-                            <option selected>Batch Code</option>
-                            <option value="1223">1223</option>
-                            <option value="1224">1224</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-select" aria-label="Opt-In">
-                            <option selected>Opt-In</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+                        <select class="form-select" id="optin" name="optin" aria-label="Opt-In">
+                            <option selected value="">Select Opt-In</option>
+                            @foreach($optin as $opt)
+                                <option value="{{ $opt }}">{{ $opt }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col-md-2 d-flex align-items-center">
-                        <button type="submit" class="btn btn-success w-100 me-2">Submit</button>
+                        <div onclick="submitValues()" class="btn btn-success w-100 me-2">Submit</div>                        
+                    </div>
+                    <div class="col-md-2 d-flex align-items-right">
                         <button class="btn btn-danger">
                             <i class="bi bi-file-earmark-excel"></i> <!-- Excel Icon -->
                         </button>
@@ -127,7 +120,7 @@
 
         <!-- Table Section -->
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table id="studentTableId" class="table table-striped">
                 <thead class="table-dark">
                     <tr>
                         <th>Entity</th>
@@ -140,42 +133,104 @@
                         <th>Batch Code</th>
                         <th>Semester</th>
                         <th>Enrollment Date</th>
+                        <th>Opt-In</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php
-                    // Example Data Array
-                    $data = [
-                        ["AAFT Online", "AOLTSHM122314599", "Vijender", "vjender.s@aaftonline.com", "9599640953", "Long Term", "HSM", "1223", "03", "13/11/2024"],
-                    ];
-
-                    for ($i = 0; $i < 10; $i++) { // Replicating rows for demonstration
-                        foreach ($data as $row) {
-                            echo "<tr>";
-                            foreach ($row as $cell) {
-                                echo "<td>$cell</td>";
-                            }
-                            echo "</tr>";
-                        }
-                    }
-                    ?>
+                <tbody id="studentTableBodyId">
+                    @foreach($userList as $user)
+                        <tr>
+                            <td>{{ $user->entity_name }}</td>
+                            <td>{{ $user->unique_id }}</td>
+                            <td>{{ $user->full_name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->phone }}</td>
+                            <td>{{ $user->school_name }}</td>
+                            <td>{{ $user->course_code }}</td>
+                            <td>{{ $user->batch_code }}</td>
+                            <td>{{ $user->semester }}</td>
+                            <td>{{ $user->enrollment_datr }}</td>
+                            <td>{{ $user->OPTIN }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
-        <nav aria-label="Page navigation" class="mt-3">
-            <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#studentTableId').DataTable();
+    });
+
+    function getSchoolList() {
+        var entity_id = $('#entity').val();
+        $.ajax({
+            url: "/get-school",
+            type: "GET",
+            data: { entity_id: entity_id },
+            success: function(data) {
+                var schoolId = $("#school").empty();
+                schoolId.append('<option selected="selected" value="">Select School</option>');
+                if(data) {        
+                    for(var i = 0; i < data.schoolList.length;i++){
+                        var school_item_el = '<option value="' + data.schoolList[i]['school_id']+'">'+ data.schoolList[i]['school_name']+'</option>';
+                        schoolId.append(school_item_el);
+                    }
+                }
+            }
+        });
+    }
+
+    function getCourseList() {
+        var school_id = $('#school').val();
+        $.ajax({
+            url: "/get-course",
+            type: "GET",
+            data: { school_id: school_id },
+            success: function(data) {
+                var courseId = $("#course").empty();
+                courseId.append('<option selected="selected" value="">Select Course</option>');
+                if(data) {        
+                    for(var i = 0; i < data.courseList.length;i++){
+                        var course_item_el = '<option value="' + data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name']+'</option>';
+                        courseId.append(course_item_el);
+                    }
+                }
+            }
+        });
+    }
+
+    function submitValues() {
+        var entity_id = $('#entity').val();
+        var school_id = $('#school').val();
+        var course_id = $('#course').val();
+        var optin = $('#optin').val();
+        $.ajax({
+            url: "/view-student-details",
+            type: "GET",
+            data: { entity_id : entity_id, school_id : school_id, course_id : course_id, optin : optin },
+            success: function(data) {
+                if(data) {
+                    
+                    $("#studentTableId").DataTable().destroy();
+                    $("#studentTableId").empty();
+                    $("#studentTableId").append('<thead class="table-dark"><tr><th>Entity</th><th>Unique ID</th><th>Name</th><th>Email ID</th><th>Contact No</th><th>School</th><th>Program Code</th><th>Batch Code</th><th>Semester</th><th>Enrollment Date</th><th>Opt-In</th></tr></thead>');
+                    $("#studentTableId").append('<tbody id="studentTableBodyId"></tbody>'); 
+                    for(var i = 0; i < data.userList.length;i++){ 
+                        var user_item_el = '<tr><td>'+ data.userList[i]['entity_name'] +'</td><td>'+ data.userList[i]['unique_id'] +'</td><td>'+ data.userList[i]['full_name'] +
+                        '</td><td>'+ data.userList[i]['email'] +'</td><td>'+ data.userList[i]['phone'] +'</td><td>'+ data.userList[i]['school_name'] +'</td><td>'+ data.userList[i]['course_code'] +'</td><td>'+ data.userList[i]['batch_code'] +'</td><td>'+ data.userList[i]['semester'] +'</td><td>'+ data.userList[i]['enrollment_datr'] +'</td><td>'+ data.userList[i]['OPTIN'] +'</td></tr>';
+                        $("#studentTableBodyId").append(user_item_el);
+                    }
+                    $('#studentTableId').DataTable();                        
+                }
+            }
+        });
+    }
+
+</script>
 
 @endsection

@@ -12,7 +12,11 @@ class CROController extends Controller
 {
     public function CRODetails()
     {
-        $userList = DB::select("SELECT u.user_id, u.full_name, u.email, u.phone, u.unique_id, u.batch_code, u.semester, u.enrollment_datr, r.role_name, 
+        $entityList = DB::select("SELECT * FROM entity");
+        // $school = DB::select("SELECT * FROM school");
+        // $course = DB::select("SELECT * FROM courses");
+        $optin = ['Yes', 'No', 'Did Not Fill Form'];
+        $userList = DB::select("SELECT u.user_id, e.entity_name, s.school_name, c.course_code, u.full_name, u.email, u.phone, u.unique_id, u.batch_code, u.semester, u.enrollment_datr, r.role_name, 
 										CASE 
 											WHEN EXISTS(
 												SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
@@ -32,12 +36,72 @@ class CROController extends Controller
                                 LEFT JOIN role r ON r.role_id = u.fk_role_id
                                 WHERE r.role_name = 'Student' AND u.`active` = 1");
 
-        return view('cro.dashboard', compact(['userList']));
+        return view('cro.dashboard', compact(['userList', 'entityList', 'optin']));
     }
 
     public function BulkUpload()
     {
         return view('cro.bulk');
+    }
+
+    public function GetSchool(Request $request)
+    {
+        $entityId = $request->entity_id;
+        $schoolList = DB::select("SELECT * FROM school WHERE fk_entity_id = ?", [$entityId]);
+        return response()->json(['schoolList'=>$schoolList]);
+    }
+
+    public function GetCourse(Request $request)
+    {
+        $schoolId = $request->school_id;
+        $courseList = DB::select("SELECT * FROM courses WHERE fk_school_id = ?", [$schoolId]);
+        return response()->json(['courseList'=>$courseList]);
+    }
+
+    public function ViewStudentDetails(Request $req)
+    {
+        $entityId = $req->entity_id;
+        $schoolId = $req->school_id;
+        $courseId = $req->course_id;
+        $optin = $req->optin;
+
+        $userList = DB::select("SELECT *
+                                    FROM (
+                                        SELECT 
+                                            u.user_id, 
+                                            e.entity_name, 
+                                            s.school_name, 
+                                            c.course_code, 
+                                            u.full_name, 
+                                            u.email, 
+                                            u.phone, 
+                                            u.unique_id, 
+                                            u.batch_code, 
+                                            u.semester, 
+                                            u.enrollment_datr, 
+                                            r.role_name, 
+                                            CASE 
+                                                WHEN EXISTS(
+                                                    SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
+                                                ) OR EXISTS(
+                                                    SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
+                                                ) THEN 'YES'
+                                                WHEN EXISTS(
+                                                    SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id 
+                                                ) THEN 'NO'
+                                                ELSE 'DID NOT FILL FORM'
+                                            END AS OPTIN
+                                        FROM users u
+                                        LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
+                                        LEFT JOIN school s ON s.school_id = u.fk_school_id
+                                        LEFT JOIN courses c ON c.course_id = u.fk_course_id
+                                        LEFT JOIN program p ON p.program_id = u.fk_program_id
+                                        LEFT JOIN role r ON r.role_id = u.fk_role_id
+                                        WHERE r.role_name = 'Student' AND u.`active` = 1 AND u.fk_entity_id = ? AND u.fk_school_id = ? AND u.fk_course_id = ?
+                                    ) subquery
+                                    WHERE OPTIN = ?", [$entityId, $schoolId, $courseId, $optin]);
+        
+        return response()->json(['userList'=>$userList]);
     }
 
     public function OnlineQuestionarie()

@@ -183,7 +183,7 @@ class HomeController extends Controller
         $workType = "";
         $reasonNotPlacing = "";
 
-        $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
+        $userId = DB::table('users')->where('email', '=', session('email'))->value('user_id');
 
         if($userId != 0)
         {
@@ -327,7 +327,7 @@ class HomeController extends Controller
 
     public function SubmitQuestionarie(Request $req)
     {
-        $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
+        $userId = DB::table('users')->where('email', '=', session('email'))->value('user_id');
         
         if($req->yes == 1)
         {
@@ -421,8 +421,8 @@ class HomeController extends Controller
 
     public function ThankYou()
     {
-        $fullName = DB::table('users')->where('email', '=', session('username'))->value('full_name');
-        $uniqueId = DB::table('users')->where('email', '=', session('username'))->value('unique_id');
+        $fullName = DB::table('users')->where('email', '=', session('email'))->value('full_name');
+        $uniqueId = DB::table('users')->where('email', '=', session('email'))->value('unique_id');
         return view('home.thank-you', compact(['fullName', 'uniqueId']));
     }
     

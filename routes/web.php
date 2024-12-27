@@ -55,3 +55,6 @@ Route::get('submit-questionarie', [HomeController::class, 'SubmitQuestionarie'])
 Route::get('thankYou', [HomeController::class, 'ThankYou']);
 
 Route::get('student-upload', [CROController::class, 'BulkUpload']);
+Route::get('get-school', [CROController::class, 'GetSchool']);
+Route::get('get-course', [CROController::class, 'GetCourse']);
+Route::get('view-student-details', [Crocontroller::class, 'ViewStudentDetails']);
