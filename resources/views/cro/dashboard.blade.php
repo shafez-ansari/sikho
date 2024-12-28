@@ -110,9 +110,9 @@
                         <div onclick="submitValues()" class="btn btn-success w-100 me-2">Submit</div>                        
                     </div>
                     <div class="col-md-2 d-flex align-items-right">
-                        <button class="btn btn-danger">
+                        <div class="btn btn-danger" onclick="downloadExcel()">
                             <i class="bi bi-file-earmark-excel"></i> <!-- Excel Icon -->
-                        </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -205,6 +205,7 @@
     }
 
     function submitValues() {
+        debugger;
         var entity_id = $('#entity').val();
         var school_id = $('#school').val();
         var course_id = $('#course').val();
@@ -215,8 +216,9 @@
             data: { entity_id : entity_id, school_id : school_id, course_id : course_id, optin : optin },
             success: function(data) {
                 if(data) {
-                    
-                    $("#studentTableId").DataTable().destroy();
+                    debugger;
+                    var studentTable = $("#studentTableId").DataTable().fnDestroy();
+                    // studentTable.destroy();
                     $("#studentTableId").empty();
                     $("#studentTableId").append('<thead class="table-dark"><tr><th>Entity</th><th>Unique ID</th><th>Name</th><th>Email ID</th><th>Contact No</th><th>School</th><th>Program Code</th><th>Batch Code</th><th>Semester</th><th>Enrollment Date</th><th>Opt-In</th></tr></thead>');
                     $("#studentTableId").append('<tbody id="studentTableBodyId"></tbody>'); 
@@ -229,6 +231,15 @@
                 }
             }
         });
+    }
+
+    function downloadExcel(){
+        var entity_id = $('#entity').val();
+        var school_id = $('#school').val();
+        var course_id = $('#course').val();
+        var optin = $('#optin').val();
+
+        window.location.href = "{{ url('download-student-details') }}" + "/" + entity_id + "/" + school_id + "/" + course_id + "/" + optin;
     }
 
 </script>

@@ -58,3 +58,5 @@ Route::get('student-upload', [CROController::class, 'BulkUpload']);
 Route::get('get-school', [CROController::class, 'GetSchool']);
 Route::get('get-course', [CROController::class, 'GetCourse']);
 Route::get('view-student-details', [Crocontroller::class, 'ViewStudentDetails']);
+Route::get('download-student-details/{entity_id?}/{school_id?}/{course_id?}/{optin?}', [Crocontroller::class, 'DownloadStudentDetails']);
+

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Response;
 
 class CROController extends Controller
 {
@@ -65,43 +66,146 @@ class CROController extends Controller
         $courseId = $req->course_id;
         $optin = $req->optin;
 
-        $userList = DB::select("SELECT *
-                                    FROM (
-                                        SELECT 
-                                            u.user_id, 
-                                            e.entity_name, 
-                                            s.school_name, 
-                                            c.course_code, 
-                                            u.full_name, 
-                                            u.email, 
-                                            u.phone, 
-                                            u.unique_id, 
-                                            u.batch_code, 
-                                            u.semester, 
-                                            u.enrollment_datr, 
-                                            r.role_name, 
-                                            CASE 
-                                                WHEN EXISTS(
-                                                    SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
-                                                ) OR EXISTS(
-                                                    SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
-                                                ) THEN 'YES'
-                                                WHEN EXISTS(
-                                                    SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id 
-                                                ) THEN 'NO'
-                                                ELSE 'DID NOT FILL FORM'
-                                            END AS OPTIN
-                                        FROM users u
-                                        LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                                        LEFT JOIN school s ON s.school_id = u.fk_school_id
-                                        LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                                        LEFT JOIN program p ON p.program_id = u.fk_program_id
-                                        LEFT JOIN role r ON r.role_id = u.fk_role_id
-                                        WHERE r.role_name = 'Student' AND u.`active` = 1 AND u.fk_entity_id = ? AND u.fk_school_id = ? AND u.fk_course_id = ?
-                                    ) subquery
-                                    WHERE OPTIN = ?", [$entityId, $schoolId, $courseId, $optin]);
-        
-        return response()->json(['userList'=>$userList]);
+        $userList = DB::select("
+            SELECT *
+            FROM (
+                SELECT 
+                    u.user_id, 
+                    e.entity_name, 
+                    s.school_name, 
+                    c.course_code, 
+                    u.full_name, 
+                    u.email, 
+                    u.phone, 
+                    u.unique_id, 
+                    u.batch_code, 
+                    u.semester, 
+                    u.enrollment_datr, 
+                    u.`active`,
+                    u.fk_entity_id,
+                    u.fk_school_id,
+                    u.fk_course_id,
+                    r.role_name, 
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
+                        ) OR EXISTS (
+                            SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
+                        ) THEN 'YES'
+                        WHEN EXISTS (
+                            SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id
+                        ) THEN 'NO'
+                        ELSE 'DID NOT FILL FORM'
+                    END AS OPTIN
+                FROM users u
+                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
+                LEFT JOIN school s ON s.school_id = u.fk_school_id
+                LEFT JOIN courses c ON c.course_id = u.fk_course_id
+                LEFT JOIN program p ON p.program_id = u.fk_program_id
+                LEFT JOIN role r ON r.role_id = u.fk_role_id
+                WHERE r.role_name = 'Student' AND u.`active` = 1
+            ) subquery
+            WHERE 
+                (? IS NULL OR OPTIN = ?)
+                AND (? IS NULL OR fk_entity_id = ?)
+                AND (? IS NULL OR fk_school_id = ?)
+                AND (? IS NULL OR fk_course_id = ?)
+        ", [
+            $optin, $optin,
+            $entityId, $entityId,
+            $schoolId, $schoolId,
+            $courseId, $courseId
+        ]);
+
+        return response()->json(['userList' => $userList]);
+    }
+
+    public function DownloadStudentDetails(Request $req)
+    {
+        $entityId = $req->entity_id;
+        $schoolId = $req->school_id;
+        $courseId = $req->course_id;
+        $optin = $req->optin;
+
+        $userList = DB::select("
+            SELECT *
+            FROM (
+                SELECT 
+                    u.user_id, 
+                    e.entity_name, 
+                    s.school_name, 
+                    c.course_code, 
+                    u.full_name, 
+                    u.email, 
+                    u.phone, 
+                    u.unique_id, 
+                    u.batch_code, 
+                    u.semester, 
+                    u.enrollment_datr, 
+                    u.`active`,
+                    u.fk_entity_id,
+                    u.fk_school_id,
+                    u.fk_course_id,
+                    r.role_name, 
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
+                        ) OR EXISTS (
+                            SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
+                        ) THEN 'YES'
+                        WHEN EXISTS (
+                            SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id
+                        ) THEN 'NO'
+                        ELSE 'DID NOT FILL FORM'
+                    END AS OPTIN
+                FROM users u
+                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
+                LEFT JOIN school s ON s.school_id = u.fk_school_id
+                LEFT JOIN courses c ON c.course_id = u.fk_course_id
+                LEFT JOIN program p ON p.program_id = u.fk_program_id
+                LEFT JOIN role r ON r.role_id = u.fk_role_id
+                WHERE r.role_name = 'Student' AND u.`active` = 1
+            ) subquery
+            WHERE 
+                (? IS NULL OR OPTIN = ?)
+                AND (? IS NULL OR fk_entity_id = ?)
+                AND (? IS NULL OR fk_school_id = ?)
+                AND (? IS NULL OR fk_course_id = ?)
+        ", [
+            $optin, $optin,
+            $entityId, $entityId,
+            $schoolId, $schoolId,
+            $courseId, $courseId
+        ]);
+
+        $filename = "StudentDetails.csv";
+        $campaignArray[] = array('Entity', 'Unique ID','Name', 'Email ID', 'Contact No', 'School', 'Program Code', 'Batch Code', 'Semester', 'Enrollment Date', 'Optin');
+        foreach($userList as $user)
+        {
+            $campaignArray[] = array(
+                'Entity' => $user->entity_name,
+                'Unique ID' => $user->unique_id,
+                'Name' => $user->full_name,
+                'Email ID' => $user->email,
+                'Contact No' => $user->phone,
+                'School' => $user->school_name,
+                'Program Code' => $user->course_code,
+                'Batch Code' => $user->batch_code,
+                'Semester' => $user->semester,
+                'Enrollment Date' => $user->enrollment_datr,
+                'Optin' => $user->OPTIN
+            );
+        }
+        $csvContent = '';
+        foreach ($campaignArray as $row)
+        {
+            $csvContent .= implode(',', $row) . "\n";
+        }
+
+        return Response::make($csvContent, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
     }
 
     public function OnlineQuestionarie()
