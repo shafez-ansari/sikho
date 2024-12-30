@@ -59,6 +59,57 @@ class CROController extends Controller
         return response()->json(['courseList'=>$courseList]);
     }
 
+    public function UploadStudent(Request $req)
+    {
+        $email = session('username');
+        $file = $request->file('studentFile');
+        $path = $file->getRealPath();
+        $mesg = '';
+        $roleId = DB::table('role')->where('role_name', '=', 'Student')->value('role_id');
+        if (($handle = fopen($path, 'r')) !== false) {
+            // Skip the first row if it contains headers
+            $header = fgetcsv($handle, 1000, ',');
+
+            // Insert data into the database
+            while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+                $entityID = DB::table('entity')->where('entity_name', '=', $row[4])->value('entity_id');
+                $schoolId = DB::table('school')->where('school_name', '=', $row[5])->value('school_id');
+                $courseId = DB::table('courses')->where('course_name', '=', $row[6])->value('course_id');
+                $programId = DB::table('program')->where('program_name', '=', $row[7])->value('program_id');
+                
+                DB::table('users')->insert([
+                    'full_name' => $row[0], // Map the columns to your table
+                    'email' => $row[1],
+                    'phone' => $row[2],
+                    'unique_id' => $row[3],
+                    'fk_entity_id' => $entityID,
+                    'fk_school_id' => $schoolId,
+                    'fk_course_id' => $courseId,
+                    'fk_program_id' => $programId,
+                    'fk_role_id' => $roleId,
+                    'batch_code' => $row[8],
+                    'semester' => $row[9],
+                    'enrollment_datr' => $row[10],
+                    'created_by' => $email,
+                    'updated_by' => $email,
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1
+                    // Add more columns as needed
+                ]);
+            }
+            fclose($handle);
+            $mesg = "File uploaded successfully";
+        }
+        else
+        {
+            $mesg = "Error in uploading file";
+        }
+
+        return response()->json(['message' => $mesg]);
+
+    }
+
     public function ViewStudentDetails(Request $req)
     {
         $entityId = $req->entity_id;

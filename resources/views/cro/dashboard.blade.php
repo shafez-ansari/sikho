@@ -2,8 +2,6 @@
 
 @section('cro-content')
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -66,9 +64,9 @@
     <div class="container mt-3">
         <!-- Top Buttons -->
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-danger btn-spacing">View Data</button>
-            <button class="btn btn-danger btn-spacing">Upload Data</button>
-            <button class="btn btn-danger btn-spacing">Recruiter</button>
+            <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">View Data</a>
+            <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Upload Data</a>
+            <a class="btn btn-danger btn-spacing">Recruiter</a>
         </div>
 
         <!-- Form Section -->
@@ -165,25 +163,6 @@
     $(document).ready(function() {
         $('#studentTableId').DataTable();
     });
-
-    function getSchoolList() {
-        var entity_id = $('#entity').val();
-        $.ajax({
-            url: "/get-school",
-            type: "GET",
-            data: { entity_id: entity_id },
-            success: function(data) {
-                var schoolId = $("#school").empty();
-                schoolId.append('<option selected="selected" value="">Select School</option>');
-                if(data) {        
-                    for(var i = 0; i < data.schoolList.length;i++){
-                        var school_item_el = '<option value="' + data.schoolList[i]['school_id']+'">'+ data.schoolList[i]['school_name']+'</option>';
-                        schoolId.append(school_item_el);
-                    }
-                }
-            }
-        });
-    }
 
     function getCourseList() {
         var school_id = $('#school').val();

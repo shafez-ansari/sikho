@@ -91,8 +91,7 @@
             }
         }
     </style>
-</head>
-<body>
+
 
     <div class="action-buttons">
         <button onclick="alert('View Data functionality coming soon!')">View Data</button>
@@ -106,7 +105,39 @@
     <div class="upload-area">
     <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
         <p>Upload Bulk Data</p>
-        <input type="file" id="bulkData" style="display:none">
+        <input type="file" name="studentFile" id="studentFile" accept=".csv" onchange="checkFile()">
+        <span class="text-danger" id="studentValidationId"></span>
     </div>
+
+<script type="text/javascript">
+    function checkFile() {
+        var file = document.getElementById('studentFile').files[0];
+        if (file) {
+            var fileName = file.name;
+            var fileExt = fileName.split('.').pop();
+            if (fileExt != 'csv') {
+                //$.notify("Please upload a CSV file", "warning");
+                $("#studentValidationId").html('Please upload a CSV file');
+                //alert('Please upload a CSV file');
+                document.getElementById('studentFile').value = '';
+            }
+            else {
+                $.ajax({
+                    url: "/upload-student-data",
+                    type: "GET",
+                    success: function(data) {
+                        if (data == 'File uploaded successfully') {
+                            $.notify(data, "success");
+                        }
+                        else {
+                            $.notify(data, "warning");
+                        }
+                    }
+                });
+            }
+        }
+    }
+</script>
+
     @endsection
 
