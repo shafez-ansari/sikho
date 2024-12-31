@@ -52,13 +52,9 @@ class HomeController extends Controller
     {
         $email = $req->email;
         $otp = $req->otp;
-        $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, u.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, u.batch_code, u.semester, u.enrollment_datr 
-                                FROM users u
-                                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                                LEFT JOIN school s ON s.school_id = u.fk_school_id
-                                LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                                LEFT JOIN program p ON p.program_id = u.fk_program_id
-                                WHERE u.email = ? OR u.unique_id = ?", [$email, $email]);
+        $userList = DB::select("SELECT u.user_id FROM users u
+                                LEFT JOIN students s ON u.user_id = s.fk_user_id
+                                WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
 
         $userId = 0;
         foreach($userList as $user)
@@ -150,12 +146,13 @@ class HomeController extends Controller
 
     public function StudentDetails()
     {
-        $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, u.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, u.batch_code, u.semester, u.enrollment_datr, ui.img_name, ui.img_path 
+        $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, stu.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, stu.batch_code, stu.semester_code, stu.enrollment_date, ui.img_name, ui.img_path 
                                 FROM users u
-                                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                                LEFT JOIN school s ON s.school_id = u.fk_school_id
-                                LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                                LEFT JOIN program p ON p.program_id = u.fk_program_id
+                                LEFT JOIN students stu ON u.user_id = stu.fk_user_id
+                                LEFT JOIN entity e ON e.entity_id = stu.fk_entity_id
+                                LEFT JOIN school s ON s.school_id = stu.fk_school_id
+                                LEFT JOIN courses c ON c.course_id = stu.fk_course_id
+                                LEFT JOIN program p ON p.program_id = stu.fk_program_id
                                 LEFT JOIN user_image ui on ui.fk_user_id = u.user_id
                                 WHERE u.email = ?", [session('username')]);
 

@@ -17,25 +17,46 @@ class CROController extends Controller
         // $school = DB::select("SELECT * FROM school");
         // $course = DB::select("SELECT * FROM courses");
         $optin = ['Yes', 'No', 'Did Not Fill Form'];
-        $userList = DB::select("SELECT u.user_id, e.entity_name, s.school_name, c.course_code, u.full_name, u.email, u.phone, u.unique_id, u.batch_code, u.semester, u.enrollment_datr, r.role_name, 
-										CASE 
-											WHEN EXISTS(
-												SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
-											) OR EXISTS(
-												SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
-											) THEN 'YES'
-											WHEN EXISTS(
-												SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id 
-											) THEN 'NO'
-											ELSE 'DID NOT FILL FORM'
-										END AS OPTIN
-                                FROM users u
-                                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                                LEFT JOIN school s ON s.school_id = u.fk_school_id
-                                LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                                LEFT JOIN program p ON p.program_id = u.fk_program_id
-                                LEFT JOIN role r ON r.role_id = u.fk_role_id
-                                WHERE r.role_name = 'Student' AND u.`active` = 1");
+        $userList = DB::select("SELECT *
+            FROM (
+                SELECT 
+                    u.user_id, 
+                    e.entity_name, 
+                    s.school_name, 
+                    c.course_code, 
+                    u.full_name, 
+                    u.email, 
+                    u.phone, 
+                    sch.unique_id, 
+                    sch.batch_code, 
+                    sch.semester_code, 
+                    sch.enrollment_date, 
+                    u.`active`,
+                    sch.fk_entity_id,
+                    sch.fk_school_id,
+                    sch.fk_course_id,
+                    r.role_name, 
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1 FROM offline_questionarie oq WHERE oq.fk_user_id = u.user_id
+                        ) OR EXISTS (
+                            SELECT 1 FROM online_questionarie_yes oqy WHERE oqy.fk_user_id = u.user_id
+                        ) THEN 'YES'
+                        WHEN EXISTS (
+                            SELECT 1 FROM questionarie_no qn WHERE qn.fk_user_id = u.user_id
+                        ) THEN 'NO'
+                        ELSE 'DID NOT FILL FORM'
+                    END AS OPTIN
+                FROM users u
+                LEFT JOIN students sch ON u.user_id = sch.fk_user_id
+                LEFT JOIN entity e ON e.entity_id = sch.fk_entity_id
+                LEFT JOIN school s ON s.school_id = sch.fk_school_id
+                LEFT JOIN courses c ON c.course_id = sch.fk_course_id
+                LEFT JOIN program p ON p.program_id = sch.fk_program_id
+                LEFT JOIN role r ON r.role_id = u.fk_role_id
+                WHERE r.role_name = 'Student' AND u.`active` = 1
+            ) subquery
+        ");
 
         return view('cro.dashboard', compact(['userList', 'entityList', 'optin']));
     }
@@ -72,30 +93,39 @@ class CROController extends Controller
 
             // Insert data into the database
             while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-                $entityID = DB::table('entity')->where('entity_name', '=', $row[4])->value('entity_id');
-                $schoolId = DB::table('school')->where('school_name', '=', $row[5])->value('school_id');
-                $courseId = DB::table('courses')->where('course_name', '=', $row[6])->value('course_id');
-                $programId = DB::table('program')->where('program_name', '=', $row[7])->value('program_id');
+                $entityID = DB::table('entity')->where('entity_name', '=', $row[3])->value('entity_id');
+                $schoolId = DB::table('school')->where('school_name', '=', $row[4])->value('school_id');
+                $courseId = DB::table('courses')->where('course_name', '=', $row[5])->value('course_id');
+                $programId = DB::table('program')->where('program_name', '=', $row[6])->value('program_id');
                 
-                DB::table('users')->insert([
+                $userId = DB::table('users')->insertGetId([
                     'full_name' => $row[0], // Map the columns to your table
                     'email' => $row[1],
                     'phone' => $row[2],
-                    'unique_id' => $row[3],
-                    'fk_entity_id' => $entityID,
-                    'fk_school_id' => $schoolId,
-                    'fk_course_id' => $courseId,
-                    'fk_program_id' => $programId,
                     'fk_role_id' => $roleId,
-                    'batch_code' => $row[8],
-                    'semester' => $row[9],
-                    'enrollment_datr' => $row[10],
                     'created_by' => $email,
                     'updated_by' => $email,
                     'created_date' => now(),
                     'updated_date' => now(),
                     'active' => 1
                     // Add more columns as needed
+                ]);
+
+                DB::table('students')->insert([
+                    'fk_entity_id' => $entityID,
+                    'fk_school_id' => $schoolId,
+                    'fk_course_id' => $courseId,
+                    'fk_program_id' => $programId,
+                    'fk_user_id' => $userId,
+                    'unique_id' => $row[7],
+                    'batch_code' => $row[8],
+                    'semester_code' => $row[9],
+                    'enrollment_date' => $row[10],
+                    'created_by' => $email,
+                    'updated_by' => $email,
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1
                 ]);
             }
             fclose($handle);
@@ -108,6 +138,47 @@ class CROController extends Controller
 
         return response()->json(['message' => $mesg]);
 
+    }
+
+    public function DownloadStudentTemplate()
+    {
+        $filename = "StudentTemplate.csv";
+        $campaignArray[] = array(
+            'Full Name', 
+            'Email ID', 
+            'Contact No',
+            'Entity',
+            'School',
+            'Course',
+            'Program Type', 
+            'Unique ID',
+            'Batch Code', 
+            'Semester', 
+            'Enrollment Date');
+        $campaignArray[] = array(
+            'Full Name' => 'Arun Verma', 
+            'Email ID' => 'arun.verma@test.com', 
+            'Contact No' => '9876543210',
+            'Entity' => 'AAFT Noida',
+            'School' => 'School of Animation',
+            'Course' => 'B.Sc. in Animation',
+            'Program Type' => 'Degree', 
+            'Unique ID' => 'AN_BAIS_1001',
+            'Batch Code' => '234', 
+            'Semester' => 3, 
+            'Enrollment Date' => '2024-12-31');
+
+        $csvContent = '';
+        foreach ($campaignArray as $row)
+        {
+            $csvContent .= implode(',', $row) . "\n";
+        }
+
+        return Response::make($csvContent, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
+        
     }
 
     public function ViewStudentDetails(Request $req)
@@ -128,14 +199,14 @@ class CROController extends Controller
                     u.full_name, 
                     u.email, 
                     u.phone, 
-                    u.unique_id, 
-                    u.batch_code, 
-                    u.semester, 
-                    u.enrollment_datr, 
+                    sch.unique_id, 
+                    sch.batch_code, 
+                    sch.semester_code, 
+                    sch.enrollment_date, 
                     u.`active`,
-                    u.fk_entity_id,
-                    u.fk_school_id,
-                    u.fk_course_id,
+                    sch.fk_entity_id,
+                    sch.fk_school_id,
+                    sch.fk_course_id,
                     r.role_name, 
                     CASE 
                         WHEN EXISTS (
@@ -149,10 +220,11 @@ class CROController extends Controller
                         ELSE 'DID NOT FILL FORM'
                     END AS OPTIN
                 FROM users u
-                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                LEFT JOIN school s ON s.school_id = u.fk_school_id
-                LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                LEFT JOIN program p ON p.program_id = u.fk_program_id
+                LEFT JOIN students sch ON u.user_id = sch.fk_user_id
+                LEFT JOIN entity e ON e.entity_id = sch.fk_entity_id
+                LEFT JOIN school s ON s.school_id = sch.fk_school_id
+                LEFT JOIN courses c ON c.course_id = sch.fk_course_id
+                LEFT JOIN program p ON p.program_id = sch.fk_program_id
                 LEFT JOIN role r ON r.role_id = u.fk_role_id
                 WHERE r.role_name = 'Student' AND u.`active` = 1
             ) subquery
@@ -189,14 +261,14 @@ class CROController extends Controller
                     u.full_name, 
                     u.email, 
                     u.phone, 
-                    u.unique_id, 
-                    u.batch_code, 
-                    u.semester, 
-                    u.enrollment_datr, 
+                    sch.unique_id, 
+                    sch.batch_code, 
+                    sch.semester_code, 
+                    sch.enrollment_date, 
                     u.`active`,
-                    u.fk_entity_id,
-                    u.fk_school_id,
-                    u.fk_course_id,
+                    sch.fk_entity_id,
+                    sch.fk_school_id,
+                    sch.fk_course_id,
                     r.role_name, 
                     CASE 
                         WHEN EXISTS (
@@ -210,10 +282,11 @@ class CROController extends Controller
                         ELSE 'DID NOT FILL FORM'
                     END AS OPTIN
                 FROM users u
-                LEFT JOIN entity e ON e.entity_id = u.fk_entity_id
-                LEFT JOIN school s ON s.school_id = u.fk_school_id
-                LEFT JOIN courses c ON c.course_id = u.fk_course_id
-                LEFT JOIN program p ON p.program_id = u.fk_program_id
+                LEFT JOIN students sch ON u.user_id = sch.fk_user_id
+                LEFT JOIN entity e ON e.entity_id = sch.fk_entity_id
+                LEFT JOIN school s ON s.school_id = sch.fk_school_id
+                LEFT JOIN courses c ON c.course_id = sch.fk_course_id
+                LEFT JOIN program p ON p.program_id = sch.fk_program_id
                 LEFT JOIN role r ON r.role_id = u.fk_role_id
                 WHERE r.role_name = 'Student' AND u.`active` = 1
             ) subquery

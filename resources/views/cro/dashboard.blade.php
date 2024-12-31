@@ -145,8 +145,8 @@
                             <td>{{ $user->school_name }}</td>
                             <td>{{ $user->course_code }}</td>
                             <td>{{ $user->batch_code }}</td>
-                            <td>{{ $user->semester }}</td>
-                            <td>{{ $user->enrollment_datr }}</td>
+                            <td>{{ $user->semester_code }}</td>
+                            <td>{{ $user->enrollment_date }}</td>
                             <td>{{ $user->OPTIN }}</td>
                         </tr>
                     @endforeach
@@ -163,6 +163,25 @@
     $(document).ready(function() {
         $('#studentTableId').DataTable();
     });
+
+    function getSchoolList() {
+        var entity_id = $('#entity').val();
+        $.ajax({
+            url: "/get-school",
+            type: "GET",
+            data: { entity_id: entity_id },
+            success: function(data) {
+                var schoolId = $("#school").empty();
+                schoolId.append('<option selected="selected" value="">Select School</option>');
+                if(data) {        
+                    for(var i = 0; i < data.schoolList.length;i++){
+                        var school_item_el = '<option value="' + data.schoolList[i]['school_id']+'">'+ data.schoolList[i]['school_name']+'</option>';
+                        schoolId.append(school_item_el);
+                    }
+                }
+            }
+        });
+    }
 
     function getCourseList() {
         var school_id = $('#school').val();
@@ -203,7 +222,7 @@
                     $("#studentTableId").append('<tbody id="studentTableBodyId"></tbody>'); 
                     for(var i = 0; i < data.userList.length;i++){ 
                         var user_item_el = '<tr><td>'+ data.userList[i]['entity_name'] +'</td><td>'+ data.userList[i]['unique_id'] +'</td><td>'+ data.userList[i]['full_name'] +
-                        '</td><td>'+ data.userList[i]['email'] +'</td><td>'+ data.userList[i]['phone'] +'</td><td>'+ data.userList[i]['school_name'] +'</td><td>'+ data.userList[i]['course_code'] +'</td><td>'+ data.userList[i]['batch_code'] +'</td><td>'+ data.userList[i]['semester'] +'</td><td>'+ data.userList[i]['enrollment_datr'] +'</td><td>'+ data.userList[i]['OPTIN'] +'</td></tr>';
+                        '</td><td>'+ data.userList[i]['email'] +'</td><td>'+ data.userList[i]['phone'] +'</td><td>'+ data.userList[i]['school_name'] +'</td><td>'+ data.userList[i]['course_code'] +'</td><td>'+ data.userList[i]['batch_code'] +'</td><td>'+ data.userList[i]['semester_code'] +'</td><td>'+ data.userList[i]['enrollment_date'] +'</td><td>'+ data.userList[i]['OPTIN'] +'</td></tr>';
                         $("#studentTableBodyId").append(user_item_el);
                     }
                     $('#studentTableId').DataTable();                        

@@ -101,7 +101,9 @@
     <div class="upload-section">
         Upload Data
     </div>
-
+    <div >
+        <a style="float:right;" href="{{url('/download-student-data-template')}}" >Download Template</a>
+    </div>
     <div class="upload-area">
     <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
         <p>Upload Bulk Data</p>
