@@ -52,6 +52,7 @@ Route::get('it-details', [HomeController::class, 'ITDetails']);
 
 Route::get('store-placement/{entity}/{school}/{yes}/{no}/{course}', [HomeController::class, 'SubmitPlacement']);
 Route::get('submit-questionarie', [HomeController::class, 'SubmitQuestionarie']);
+Route::get('get-city', [HomeController::class, 'GetCity']);
 Route::get('thankYou', [HomeController::class, 'ThankYou']);
 
 Route::get('student-upload', [CROController::class, 'BulkUpload']);

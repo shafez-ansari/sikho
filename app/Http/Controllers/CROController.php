@@ -332,6 +332,91 @@ class CROController extends Controller
         ]);
     }
 
+    public function AutoCompleteCompany(Request $req)
+    {
+        $companyName = $req->companyName;
+        $companyNameList = DB::select("SELECT cd.comp_name FROM company_details cd
+                                        WHERE cd.comp_name LIKE '%?%'", [$companyName]);
+        return response()->json(['compList' => $companyNameList]);
+    }
+
+    public function CheckCompany(Request $req)
+    {
+        $compName = $req->compnayName;
+        $compId = DB::table('company_details')->where('comp_name', '=', $compName)->value('comp_id');
+        if($compId != 0)
+        {
+            $compLeadList = DB::select("SELECT cd.comp_name, e.entity_name, s.school_name, c.course_name, p.program_name, u.email, ind.sector_name, l.industry_name, 
+                                                cld.resource_person, cld.designation, cld.primary_email, cld.primary_phone, cld.leadsource, cld.lead_stage, 
+                                                cld.industry_engagement FROM company_lead_details cld
+                                        LEFT JOIN company_details cd ON cld.fk_comp_id = cd.comp_id
+                                        LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
+                                        LEFT JOIN school s ON cld.fk_school_id = s.school_id
+                                        LEFT JOIN courses c ON cld.fk_course_id = c.course_id
+                                        LEFT JOIN program p ON cld.fk_program_id = p.program_id
+                                        LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
+                                        LEFT JOIN industry_sector ind ON cld.fk_industry_sector_id = ind.industry_sector_id
+                                        LEFT JOIN industry_location l ON cld.fk_location_id = l.industry_loc_id
+                                        WHERE cd.comp_id = ?", [$compId]);
+
+            return response()->json(['compLeadList' => $compLeadList]);
+        }
+        else 
+        {
+            return response()->json(['compLeadList' => 'Company does not exist']);
+        }
+    }
+
+    public function AddCompany(Request $req)
+    {
+        $companyName = $req->compName;
+        $numbers = "";
+        $lastCompId = DB::table('company_details')->orderBy('comp_unique_id', 'desc')->value('comp_unique_id');
+        if($lastCompId != "")
+        {
+            if (preg_match_all('/\d+/', $text, $matches)) {
+                $numbers = $matches[0]; // Array of all numbers
+            }
+            $numbers = $numbers + 1;
+        }
+        else 
+        {
+            $numbers = "1001";
+        }
+        
+        $uniqueId = "AAFT" + $numbers;
+        DB::table('students')->insert([
+            'comp_unique_id' => $uniqueId,
+            'comp_name' => $companyName,
+            'comp_category' => $req->compCategory,
+            'comp_website' => $req->compWebsite,
+            'comp_month' => $req->compMonth,
+            'comp_year' => $req->compYear,
+            'created_by' => session('username'),
+            'updated_by' => session('username'),
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1
+        ]); 
+
+        return response()->json(['mesg' => 'Data inserted successfully']);
+    }
+
+    public function GetCompanyLead()
+    {
+        $entityList = DB::select("SELECT * FROM entity");
+        $programList = DB::select("SELECT * FROM program");
+        $industrySectorList = DB::select("SELECT * FROM industry_sector");
+        $industryLocationList = DB::select("SELECT * FROM industry_location");
+        return response()->json(['entityList' => $entityList, 'programList' => $programList, 'industrySectorList' => $industrySectorList, 'industryLocationList' => $industryLocationList]);
+    }
+    
+
+    public function AddCompanyLead(Request $req)
+    {
+        
+    }
+
     public function OnlineQuestionarie()
     {
         $onlineQuestionarieList = DB::select("SELECT s.state_name, c.city_name, a.qualification_name, cs.career_name, oqy.technical_skill, oqy.job_role, oqy.relevant_job, oqy.relevant_job, el.emp_loc_name,

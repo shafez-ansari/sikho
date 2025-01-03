@@ -313,7 +313,7 @@
                         <td style="font-weight: bold; padding: 8px;">Contact:</td>
                         <td style="padding: 8px;">{{ $user->phone }}</td>
                         <td style="font-weight: bold; padding: 8px;">Enrollment Date:</td>
-                        <td style="padding: 8px;">{{ $user->enrollment_datr }}</td>
+                        <td style="padding: 8px;">{{ $user->enrollment_date }}</td>
                     </tr>
                     @endforeach
                 </table>

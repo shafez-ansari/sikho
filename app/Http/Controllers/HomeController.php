@@ -14,7 +14,8 @@ class HomeController extends Controller
     public function Login(Request $req)
     {
         $email = $req->email;
-        $userList = DB::select("SELECT * FROM users  WHERE email = ? OR unique_id = ?", [$email, $email]);
+        $userList = DB::select("SELECT u.user_id FROM users u
+                                LEFT JOIN students s ON u.user_id = s.student_id WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
         
         if(count($userList) == 0)
         {
@@ -52,7 +53,7 @@ class HomeController extends Controller
     {
         $email = $req->email;
         $otp = $req->otp;
-        $userList = DB::select("SELECT u.user_id FROM users u
+        $userList = DB::select("SELECT * FROM users u
                                 LEFT JOIN students s ON u.user_id = s.fk_user_id
                                 WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
 
@@ -74,8 +75,7 @@ class HomeController extends Controller
             foreach($userList as $user)
             {
                 $roleId = $user->fk_role_id;
-                session()->put('username', $user->email);
-                
+                session()->put('username', $user->email); 
             }
 
             $roleName = DB::table('role')->where('role_id', '=', $roleId)->value('role_name');
@@ -180,7 +180,7 @@ class HomeController extends Controller
         $workType = "";
         $reasonNotPlacing = "";
 
-        $userId = DB::table('users')->where('email', '=', session('email'))->value('user_id');
+        $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
 
         if($userId != 0)
         {
@@ -324,7 +324,7 @@ class HomeController extends Controller
 
     public function SubmitQuestionarie(Request $req)
     {
-        $userId = DB::table('users')->where('email', '=', session('email'))->value('user_id');
+        $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
         
         if($req->yes == 1)
         {
@@ -416,10 +416,17 @@ class HomeController extends Controller
         return response()->json(["thankyou" => url("thankYou")]);
     }
 
+    public function GetCity(Request $req)
+    {
+        $stateId = $req->stateId;
+        $cityList = DB::select("SELECT city_id, city_name FROM city WHERE fk_state_id = ?", [$stateId]);
+        return response()->json(['cityList' => cityList]);
+    }
+
     public function ThankYou()
     {
-        $fullName = DB::table('users')->where('email', '=', session('email'))->value('full_name');
-        $uniqueId = DB::table('users')->where('email', '=', session('email'))->value('unique_id');
+        $fullName = DB::table('users')->where('email', '=', session('username'))->value('full_name');
+        $uniqueId = DB::table('users')->where('email', '=', session('username'))->value('unique_id');
         return view('home.thank-you', compact(['fullName', 'uniqueId']));
     }
     
