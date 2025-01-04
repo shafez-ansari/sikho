@@ -117,7 +117,7 @@
                     <label for="jobTypeId">What job type are you interested in?</label>
                     <select name="jobTypeId" id="jobTypeId" class="form-control" multiple="multiple">
                         @foreach($jobType as $job)
-                            <option value="{{$job->job_type_id}}">{{$job->job_type_name}}</option>
+                            <option value="{{$job->job_type_name}}">{{$job->job_type_name}}</option>
                         @endforeach
                     </select>
                     <span class="text-danger" id="jobTypeError"></span>
@@ -127,7 +127,7 @@
                     <label for="jobLocationId">Preferred Location of Job/Employment</label>
                     <select name="jobLocationId" id="jobLocationId" class="form-control" multiple="multiple">
                         @foreach($empLocation as $loc)
-                            <option value="{{$loc->emp_loc_id}}">{{$loc->emp_loc_name}}</option>
+                            <option value="{{$loc->emp_loc_name}}">{{$loc->emp_loc_name}}</option>
                         @endforeach
                     </select>
                     <span class="text-danger" id="jobLocationError"></span>
@@ -155,6 +155,7 @@
                     <select name="cityId" id="cityId" class="form-control">
                         <option value="">--Select--</option>
                     </select>
+                    <span class="text-danger" id="cityIdError"></span>
                 </div>
 
                 <div class="form-section">
@@ -286,7 +287,8 @@
     });
 
     function submitQuestionarie() {
-        // Add form submission logic here        
+        // Add form submission logic here
+        debugger;        
         var entityId = $("#hdnEntityName").val();
         var yes = $("#hdnYes").val();
         var no = $("#hdnNo").val();
@@ -294,7 +296,7 @@
         var course = $("#hdnCourse").val();
         if(yes == 1) {
             if(entityId == "AAFT Noida" || entityId == "AAFT University") {
-                debugger;
+                
                 var qualId = $("#qualId").val();
                 var jobProfileId = $("#jobProfileId").val();
                 var jobTypeId = $("#jobTypeId").val();
@@ -351,25 +353,15 @@
 
                 if($("#qualError").text() == "" && $("#jobProfileError").text() == "" && $("#jobTypeError").text() == "" && $("#jobLocationError").text() == "" && $("#workExpError").text() == "") {
                     // Submit form
-                    var formData = new FormData();
-                    formData.append("_token", "{{ csrf_token() }}");
-                    formData.append("qualId", qualId);
-                    formData.append("jobProfileId", jobProfileId);
-                    formData.append("jobTypeId", jobTypeId);
-                    formData.append("jobLocationId", jobLocationId);
-                    formData.append("workExp", workExp);
-                    formData.append("entityId", entityId);
-                    formData.append("school", school);
-                    formData.append("course", course);
+                    
                     $.ajax({
-                        type: "POST",
-                        url: "{{  url('submit-questionarie') }}",
-                        data: formData,
-                        contentType: false,
-                        processData: false,
+                        type: "GET",
+                        url: "/submit-questionarie",
+                        data: {qualId : qualId, jobProfileId : jobProfileId, jobTypeId : jobTypeId, jobLocationId : jobLocationId, workExp : workExp, entityName : entityId, school : school, course : course, yes : yes, no : no},
                         success: function(response) {
-                            if(response) {                                
-                                window.location.href = response;
+                            if(response) {    
+                                let url = `/thankYou/`;                            
+                                window.location.href = url;
                             } 
                         }
                     });
@@ -391,6 +383,7 @@
                 var jobRelocateId = $("#jobRelocateId").val();
                 var jobLocationId = $("#jobLocationId").val();
                 var workTypeId = $("#workTypeId").val();
+                
                 if(stateId == "") {
                     $("#stateIdError").text("Please select state");
                     
@@ -473,32 +466,17 @@
                 }
 
                 if($("#stateIdError").text() == "" && $("#cityIdError").text() == "" && $("#qualError").text() == "" && $("#empStatusError").text() == "" && $("#careerSupportError").text() == "" && $("#techSkillError").text() == "" && $("#jobProfileError").text() == "" && $("#jobRoleError").text() == "" && $("#jobRelocateError").text() == "" && $("#jobLocationError").text() == "" && $("#workTypeError").text() == "") {
-                    // Submit form
-                    var formData = new FormData();
-                    formData.append("_token", "{{ csrf_token() }}");
-                    formData.append("stateId", stateId);
-                    formData.append("cityId", cityId);
-                    formData.append("qualId", qualId);
-                    formData.append("empStatusId", empStatusId);
-                    formData.append("careerSupportId", careerSupportId);
-                    formData.append("techSkillId", techSkillId);
-                    formData.append("jobProfileId", jobProfileId);
-                    formData.append("jobRolesId", jobRolesId);
-                    formData.append("jobRelocateId", jobRelocateId);
-                    formData.append("jobLocationId", jobLocationId);
-                    formData.append("workTypeId", workTypeId);
-                    formData.append("entityId", entityId);
-                    formData.append("school", school);
-                    formData.append("course", course);
+                    // Submit form                    
                     $.ajax({
-                        type: "POST",
+                        type: "GET",
                         url: "{{  url('submit-questionarie') }}",
-                        data: formData,
+                        data: { stateId : stateId, cityId:cityId, qualId : qualId, empStatusId : empStatusId, careerSupportId : careerSupportId, techSkillId : techSkillId, jobProfileId : jobProfileId, jobRolesId : jobRolesId, jobLocationId : jobLocationId, jobRelocateId : jobRelocateId, workTypeId : workTypeId, entityId : entityId, school : school, course : course, yes : yes, no : no },
                         contentType: false,
                         processData: false,
                         success: function(response) {
                             if(response) {                                
-                                window.location.href = response;
+                                let url = `/thankYou/`;                            
+                                window.location.href = url;
                             } 
                         }
                     });
@@ -529,22 +507,15 @@
 
             if($("#notPlacementError").text() == "" && $("#intervalError").text() == "") {
                 // Submit form
-                var formData = new FormData();
-                formData.append("_token", "{{ csrf_token() }}");
-                formData.append("notPlacementId", notPlacementId);
-                formData.append("intervalId", intervalId);
-                formData.append("entityId", entityId);
-                formData.append("school", school);
-                formData.append("course", course);
                 $.ajax({
-                    type: "POST",
-                    url: "{{  url('submit-questionarie') }}",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
+                    type: "GET",
+                    url: "/submit-questionarie",
+                    data: { notPlacementId : notPlacementId, intervalId : intervalId, entityId : entityId, school : school, course : course, yes : yes, no : no },
+                    
                     success: function(response) {
                         if(response) {                                
-                            window.location.href = response;
+                            let url = `/thankYou/`;                            
+                            window.location.href = url;
                         } 
                     }
                 });

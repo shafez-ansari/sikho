@@ -85,7 +85,7 @@
     <div class="container">
         <div class="message-box">
             <!-- Close Button -->
-            <a href="#" class="close-btn" onclick="window.history.back();">&times;</a>
+            <!-- <a href="#" class="close-btn" onclick="window.history.back();">&times;</a> -->
 
             <!-- Greeting -->
             <p>Dear {{ $fullName }}</p>
@@ -98,7 +98,7 @@
               <br>
 
             <!-- Check Icon -->
-            <img src="Green.png" alt="Check Icon" class="check-icon">
+            <img src="{{url('/images/Green.png')}}" alt="Check Icon" class="check-icon">
 
             <!-- Thank You Message -->
             <h2>Thank you!</h2>

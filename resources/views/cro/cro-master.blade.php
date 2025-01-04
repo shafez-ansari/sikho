@@ -237,7 +237,15 @@
                 <img src="{{url('/images/Aaft.png')}}" alt="AAFT Logo">
                 <img src="{{url('/images/University.png')}}" alt="AAFT University Logo">
             </div>
-            @yield('cro-content')
+            <div class="container mt-3">
+                <!-- Top Buttons -->
+                <div class="d-flex justify-content-between mb-3">
+                    <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">View Data</a>
+                    <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Upload Data</a>
+                    <a class="btn btn-danger btn-spacing">Recruiter</a>
+                </div>            
+                @yield('cro-content')
+            </div>
             <div class="illustration">
                 <div class="row">
                     <div class="col-sm-6">

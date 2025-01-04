@@ -91,13 +91,10 @@
             }
         }
     </style>
-
-
-    <div class="action-buttons">
+    <!-- <div class="action-buttons">
         <button onclick="alert('View Data functionality coming soon!')">View Data</button>
         <button onclick="alert('Upload Data functionality coming soon!')">Upload Data</button>
-    </div>
-
+    </div> -->
     <div class="upload-section">
         Upload Data
     </div>

@@ -113,7 +113,9 @@ class HomeController extends Controller
     public function ResendOtp(Request $req)
     {
         $email = $req->email;
-        $userList = DB::select("SELECT * FROM users  WHERE email = ? OR unique_id = ?", [$email, $email]);
+        $userList = DB::select("SELECT * FROM users u
+                                LEFT JOIN students s ON u.user_id = s.fk_user_id
+                                WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
         $userId = 0;
         foreach($userList as $user)
         {
@@ -187,7 +189,9 @@ class HomeController extends Controller
             if($yes == 1 )
             {
                 $academicQual = DB::select("SELECT qualification_id, qualification_name FROM academic_qualification WHERE active = 1");
-                if($entityName == "AAFT Noida" || $entityName == "AAFT University")
+                $questionarieId = DB::table('offline_questionarie')->where('fk_user_id', '=', $userId)->value('noida_question_id');
+                
+                if($entityName == "AAFT Noida" || $entityName == "AAFT University" )
                 {                  
                     if($school == "School of Animation")
                     {
@@ -275,7 +279,7 @@ class HomeController extends Controller
                     {
                         $jobProfile = DB::select("SELECT job_music_id, jobName FROM job_music");
                     }
-                    else if($course == "Diploma in 3D Animation & Visual Effects")
+                    else if($course == "Diploma in Animation & VFX")
                     {
                         $jobProfile = DB::select("SELECT job_animation_id, jobName FROM job_animation");
                     }
@@ -317,7 +321,7 @@ class HomeController extends Controller
         {
             return redirect()->action([HomeController::class, 'ThankYou']);
         }
-
+        
         return view('home.submit-placement', compact(['entityName', 'school', 'course', 'jobProfile', 'academicQual', 'jobType', 'empLocation', 'state', 'city',
         'empStatus', 'careerSupport', 'jobRoles', 'jobRelocate', 'workType', 'reasonNotPlacing', 'yes', 'no']));
     }
@@ -328,92 +332,97 @@ class HomeController extends Controller
         
         if($req->yes == 1)
         {
-            $academicQual = $req->academicQual;
-            $entity = $req->entity;
+            $academicQual = $req->qualId;
+            $entity = $req->entityName;
             $course = $req->course;
             $school = $req->school;                
             $entityId = DB::table('entity')->where('entity_name', '=', $entity)->value('entity_id');
-            $schoolId = DB::table('school')->where('school_name', '=', $entity)->value('school_code');
+            $schoolId = DB::table('school')->where('school_name', '=', $school)->value('school_id');
     
-            if($req->entity == "AAFT Noida" || $req->entity == "AAFT University")
+            if($entity == "AAFT Noida" || $entity == "AAFT University")
             {
-                $jobProfile = $req->jobProfile;
-                $jobType = $req->jobType;
-                $jobLocation = $req->jobLocation;
-                $workExp = $req->workExp;
-                //$empLocId = $req->
-                $entity = $req->entity;
-                $course = $req->course;
-                $school = $req->school;                
-                $entityId = DB::table('entity')->where('entity_name', '=', $entity)->value('entity_id');
-                $schoolId = DB::table('school')->where('school_name', '=', $entity)->value('school_code');
-                
-                DB::table('offline_questionarie')->insert([
-                    'fk_qualifcation_id' => $academicQual,
-                    'fk_user_id' => $userId,
-                    'fk_job_type_id' => $jobType,
-                    'job_profile' => $jobProfile,
-                    'fk_entity_id' => $entityId,
-                    'fk_school_id' => $schoolId,
-                    'fk_emp_loc_id' => $jobLocation,
-                    'work_exp' => $workExp,
-                    'created_by' => session('username'),
-                    'updated_by' => session('username'),
-                    'created_date' => now(),
-                    'updated_date' => now(),
-                    'active' => 1   
-                ]);
+                $jobProfile = is_array($req->jobProfileId) ? implode(', ', $req->jobProfileId) : '';
+                $jobType = is_array($req->jobTypeId) ? implode(', ', $req->jobTypeId) : '';
+                $jobLocation = is_array($req->jobLocationId) ? implode(', ', $req->jobLocationId) : '';
+                $workExp = $req->workExp ?? ''; // Ensure work experience is not null
+                $questionarieId = DB::table('offline_questionarie')->where('fk_user_id', '=', $userId)->value('noida_question_id');
+                if($questionarieId == 0)
+                {
+                    DB::table('offline_questionarie')->insert([
+                        'fk_qual_id' => $academicQual, // Assuming this is a sanitized input
+                        'fk_user_id' => $userId, // Assuming this is a sanitized input
+                        'job_type' => $jobType, // Stored as a string
+                        'job_profile' => $jobProfile, // Stored as a string
+                        'fk_entity_id' => $entityId, // Assuming this is a sanitized input
+                        'fk_school_id' => $schoolId, // Assuming this is a sanitized input
+                        'emp_location' => $jobLocation, // Stored as a string
+                        'work_exp' => $workExp, // Assuming this is a sanitized input
+                        'created_by' => session('username') ?? 'system',
+                        'updated_by' => session('username') ?? 'system',
+                        'created_date' => now(),
+                        'updated_date' => now(),
+                        'active' => 1
+                    ]);
+                }
             }
-            else if($entityName == "AAFT Online")
+            else if($entity == "AAFT Online")
             {
-                $state = $req->state;
-                $city = $req->city;
-                $empStatus = $req->empStatus;
-                $careerSupport = $req->careerSupport;
-                $technicalSkill = $req->technicalSkill;
-                $jobRole = $req->jobRole;
+                $state = $req->stateId;
+                $city = $req->cityId;
+                $empStatus = $req->empStatusId;
+                $careerSupport = $req->careerSupportId;
+                $technicalSkill = $req->techSkillId;
+                $jobRole = implode(', ',$req->jobProfileId);
                 $preferedJob = $req->preferedJob;
                 $relocate = $req->relocate;
                 $jobPlace = $req->jobPlace;
                 $workType = $req->workType;
-                DB::table('online_questionarie_yes')->insert([
-                    'fk_state_id' => $state,
-                    'fk_city_id' => $city,
-                    'fk_qualification_id' => $academicQual,
-                    'fk_employment_status_id' => $empStatus,
-                    'fk_career_id' => $careerSupport,
-                    'technical_skill' => $technicalSkill,
-                    'job_role' => $jobRole,
-                    'relevant_job' => $preferedJob,
-                    'relocate' => $relocate,
-                    'fk_emp_loc_id' => $jobPlace,
-                    'fk_work_type_id' => $workType,
-                    'fk_user_id' => $userId,
-                    'created_by' => session('username'),
-                    'updated_by' => session('username'),
-                    'created_date' => now(),
-                    'updated_date' => now(),
-                    'active' => 1   
-                ]);
+                $questionarieId = DB::table('online_questionarie_yes')->where('fk_user_id', '=', $userId)->value('online_questionarie_id');
+                if($questionarieId == 0)
+                {
+                    DB::table('online_questionarie_yes')->insert([
+                        'fk_state_id' => $state,
+                        'fk_city_id' => $city,
+                        'fk_qualification_id' => $academicQual,
+                        'fk_employment_status_id' => $empStatus,
+                        'fk_career_id' => $careerSupport,
+                        'technical_skill' => $technicalSkill,
+                        'job_role' => $jobProfileId,
+                        'fk_job_role_id' => $jobRolesId,
+                        'fk_relocate_id' => $jobRelocateId,
+                        'fk_emp_loc_id' => $jobLocationId,
+                        'fk_work_type_id' => $workTypeId,
+                        'fk_user_id' => $userId,
+                        'created_by' => session('username'),
+                        'updated_by' => session('username'),
+                        'created_date' => now(),
+                        'updated_date' => now(),
+                        'active' => 1   
+                    ]);
+                }
             }
         }
         else 
         {
             $interval = $req->interval;
             $notPlacement = $req->notPlacement;
-            DB::table('questionarie_no')->insert([
-                'fk_placement_no_id' => $notPlacement,
-                'fk_user_id' => $userId,
-                'interval' => $interval,
-                'created_by' => session('username'),
-                'updated_by' => session('username'),
-                'created_date' => now(),
-                'updated_date' => now(),
-                'active' => 1   
-            ]);
+            $questionarieId = DB::table('questionarie_no')->where('fk_user_id', '=', $userId)->value('questionarie_no_id');
+            if($questionarieId == 0)
+            {
+                DB::table('questionarie_no')->insert([
+                    'fk_placement_no_id' => $notPlacementId,
+                    'fk_user_id' => $userId,
+                    'interval' => $intervalId,
+                    'created_by' => session('username'),
+                    'updated_by' => session('username'),
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1   
+                ]);
+            }
         }
 
-        return response()->json(["thankyou" => url("thankYou")]);
+        return response()->json(["thankyou" => "thankYou"]);
     }
 
     public function GetCity(Request $req)
@@ -426,7 +435,7 @@ class HomeController extends Controller
     public function ThankYou()
     {
         $fullName = DB::table('users')->where('email', '=', session('username'))->value('full_name');
-        $uniqueId = DB::table('users')->where('email', '=', session('username'))->value('unique_id');
+        $uniqueId = DB::table('users')->join('students', 'users.user_id', '=', 'students.fk_user_id')->where('email', '=', session('username'))->value('unique_id');
         return view('home.thank-you', compact(['fullName', 'uniqueId']));
     }
     

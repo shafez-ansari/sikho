@@ -60,15 +60,6 @@
             color: white;
         }
     </style>
-
-    <div class="container mt-3">
-        <!-- Top Buttons -->
-        <div class="d-flex justify-content-between mb-3">
-            <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">View Data</a>
-            <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Upload Data</a>
-            <a class="btn btn-danger btn-spacing">Recruiter</a>
-        </div>
-
         <!-- Form Section -->
         <div class="card mb-3">
             <div class="card-header bg-dark text-white">
@@ -153,10 +144,7 @@
                 </tbody>
             </table>
         </div>
-
         
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="text/javascript">
@@ -203,7 +191,7 @@
     }
 
     function submitValues() {
-        debugger;
+        
         var entity_id = $('#entity').val();
         var school_id = $('#school').val();
         var course_id = $('#course').val();
@@ -214,7 +202,7 @@
             data: { entity_id : entity_id, school_id : school_id, course_id : course_id, optin : optin },
             success: function(data) {
                 if(data) {
-                    debugger;
+                    
                     var studentTable = $("#studentTableId").DataTable().fnDestroy();
                     // studentTable.destroy();
                     $("#studentTableId").empty();
