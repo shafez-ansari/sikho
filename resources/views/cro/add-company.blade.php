@@ -111,7 +111,7 @@
         <div class="form-table-wrapper">
             <div class="form-section">
                 <form>
-                    <input type="text" placeholder="Enter New Company Name">
+                    <input type="text" name="companyName" id="companyName" placeholder="Enter New Company Name">
                     <button type="button">Show Details</button>
                 </form>
             </div>
