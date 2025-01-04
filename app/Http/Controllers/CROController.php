@@ -359,15 +359,15 @@ class CROController extends Controller
 
     public function AutoCompleteCompany(Request $req)
     {
-        $companyName = $req->companyName;
-        $companyNameList = DB::select("SELECT cd.comp_name FROM company_details cd
-                                        WHERE cd.comp_name LIKE '%?%'", [$companyName]);
-        return response()->json(['compList' => $companyNameList]);
+        $companyName = $req->get('query');
+        $companyNameList = DB::select("SELECT comp_name FROM company_details WHERE comp_name LIKE '%$companyName%'");
+
+        return response()->json($companyNameList);
     }
 
     public function CheckCompany(Request $req)
     {
-        $compName = $req->compnayName;
+        $compName = $req->compName;
         $compId = DB::table('company_details')->where('comp_name', '=', $compName)->value('comp_id');
         if($compId != 0)
         {

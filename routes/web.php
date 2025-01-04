@@ -62,6 +62,10 @@ Route::get('download-student-details/{entity_id?}/{school_id?}/{course_id?}/{opt
 Route::post('/upload.student.data', [CROController::class, 'UploadStudent'])->name('upload.student.data');
 Route::get('download-student-data-template', [CROController::class, 'DownloadStudentTemplate']);
 Route::get('view-company', [CROController::class, 'ViewCompany']);
+Route::get('autocomplete-search', [CROController::class, 'AutoCompleteCompany']);
+Route::get('get-company-details', [CROController::class, 'CheckCompany']);
+
+
 
 
 

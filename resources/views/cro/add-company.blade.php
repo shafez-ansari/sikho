@@ -106,16 +106,23 @@
             }
         }
     </style>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- jQuery UI (for styling suggestions) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <main class="main-content">
         <div class="heading-section">Adding New Company/If Already Existing Company</div>
         <div class="form-table-wrapper">
             <div class="form-section">
                 <form>
-                    <input type="text" name="companyName" id="companyName" placeholder="Enter New Company Name">
-                    <button type="button">Show Details</button>
+                <input type="text" id="compSearch" placeholder="Enter new company name">
+                    
+                    <button type="button" onclick="showDetails();">Show Details</button>
                 </form>
             </div>
-            <table>
+            <!-- <table>
                 <thead>
                     <tr>
                         <th>Spoke Persons</th>
@@ -144,9 +151,40 @@
                         <td>BA in Music</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
         </div>
         <a href="#" class="add-record">Add New Record</a>
     </main>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#compSearch').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "/autocomplete-search",
+                        type: "GET",
+                        data: { query: request.term },
+                        success: function(data) {
+                            
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+
+        function showDetails() {
+            var compName = $('#compSearch').val();
+            $.ajax({
+                url: "/get-company-details",
+                type: "GET",
+                data: { compName: compName },
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        }
+    </script>
 
 @endsection
