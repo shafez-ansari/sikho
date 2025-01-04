@@ -183,8 +183,10 @@ class HomeController extends Controller
         $reasonNotPlacing = "";
 
         $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
-
-        if($userId != 0)
+        $offline_questionarie = DB::table('offline_questionarie')->where('fk_user_id', '=', $userId)->value('noida_question_id');
+        $online_questionarie = DB::table('online_questionarie_yes')->where('fk_user_id', '=', $userId)->value('online_questionarie_id');
+        $notPlacement = DB::table('questionarie_no')->where('fk_user_id', '=', $userId)->value('questionarie_no_id');
+        if($offline_questionarie == 0 && $online_questionarie == 0 && $notPlacement == 0)
         {
             if($yes == 1 )
             {

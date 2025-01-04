@@ -1,7 +1,7 @@
 @extends('cro.cro-master')
 
 @section('cro-content')
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
         /* General Styles */
         body {
@@ -104,38 +104,54 @@
     <div class="upload-area">
     <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
         <p>Upload Bulk Data</p>
-        <input type="file" name="studentFile" id="studentFile" accept=".csv" onchange="checkFile()">
-        <span class="text-danger" id="studentValidationId"></span>
+           
+        <form id="uploadForm" enctype="multipart/form-data">
+            @csrf
+            <input type="file" name="studentFile" id="studentFile" accept=".csv" required>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
     </div>
 
 <script type="text/javascript">
-    function checkFile() {
-        var file = document.getElementById('studentFile').files[0];
-        if (file) {
-            var fileName = file.name;
-            var fileExt = fileName.split('.').pop();
-            if (fileExt != 'csv') {
-                //$.notify("Please upload a CSV file", "warning");
-                $("#studentValidationId").html('Please upload a CSV file');
-                //alert('Please upload a CSV file');
-                document.getElementById('studentFile').value = '';
-            }
-            else {
-                $.ajax({
-                    url: "/upload-student-data",
-                    type: "GET",
-                    success: function(data) {
-                        if (data == 'File uploaded successfully') {
-                            $.notify(data, "success");
-                        }
-                        else {
-                            $.notify(data, "warning");
-                        }
-                    }
-                });
-            }
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
+    });
+
+    $('#uploadForm').on('submit', function(e) {
+    e.preventDefault();
+
+    var file = document.getElementById('studentFile').files[0];
+    if (!file) {
+        $('#studentValidationId').html('Please select a file to upload.');
+        return;
     }
+
+    var fileExt = file.name.split('.').pop().toLowerCase();
+    if (fileExt != 'csv') {
+        $('#studentValidationId').html('Please upload a valid CSV file.');
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('studentFile', file);
+
+    $.ajax({
+        url: "{{ route('upload.student.data') }}",
+        method: "POST",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            alert(response.message);
+        },
+        error: function(xhr) {
+            alert(xhr.responseJSON.message);
+        }
+    });
+    });
 </script>
 
     @endsection

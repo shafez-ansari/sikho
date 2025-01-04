@@ -4,7 +4,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
         <title>AAFT Connect</title>
+        
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
@@ -13,7 +15,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>  
         <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
         <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/notify.js/2.0.0/notify.min.js"></script>
+        <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -242,7 +244,7 @@
                 <div class="d-flex justify-content-between mb-3">
                     <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">View Data</a>
                     <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Upload Data</a>
-                    <a class="btn btn-danger btn-spacing">Recruiter</a>
+                    <a href="{{ url('view-company') }}" class="btn btn-danger btn-spacing">Recruiter</a>
                 </div>            
                 @yield('cro-content')
             </div>

@@ -66,6 +66,11 @@ class CROController extends Controller
         return view('cro.bulk');
     }
 
+    public function ViewCompany()
+    {
+        return view('cro.add-company');
+    }
+
     public function GetSchool(Request $request)
     {
         $entityId = $request->entity_id;
@@ -81,63 +86,83 @@ class CROController extends Controller
     }
 
     public function UploadStudent(Request $req)
-    {
+    {        
         $email = session('username');
-        $file = $request->file('studentFile');
-        $path = $file->getRealPath();
-        $mesg = '';
-        $roleId = DB::table('role')->where('role_name', '=', 'Student')->value('role_id');
-        if (($handle = fopen($path, 'r')) !== false) {
-            // Skip the first row if it contains headers
-            $header = fgetcsv($handle, 1000, ',');
+        $req->validate([
+            'studentFile' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+        if ($req->hasFile('studentFile')) {
+            $file = $req->file('studentFile');
+            $path = $file->getRealPath();
+            $mesg = '';
+            $roleId = DB::table('role')->where('role_name', 'Student')->value('role_id');
 
-            // Insert data into the database
-            while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-                $entityID = DB::table('entity')->where('entity_name', '=', $row[3])->value('entity_id');
-                $schoolId = DB::table('school')->where('school_name', '=', $row[4])->value('school_id');
-                $courseId = DB::table('courses')->where('course_name', '=', $row[5])->value('course_id');
-                $programId = DB::table('program')->where('program_name', '=', $row[6])->value('program_id');
-                
-                $userId = DB::table('users')->insertGetId([
-                    'full_name' => $row[0], // Map the columns to your table
-                    'email' => $row[1],
-                    'phone' => $row[2],
-                    'fk_role_id' => $roleId,
-                    'created_by' => $email,
-                    'updated_by' => $email,
-                    'created_date' => now(),
-                    'updated_date' => now(),
-                    'active' => 1
-                    // Add more columns as needed
-                ]);
+            if (($handle = fopen($path, 'r')) !== false) {
+                // Skip the header row
+                $header = fgetcsv($handle, 1000, ',');
 
-                DB::table('students')->insert([
-                    'fk_entity_id' => $entityID,
-                    'fk_school_id' => $schoolId,
-                    'fk_course_id' => $courseId,
-                    'fk_program_id' => $programId,
-                    'fk_user_id' => $userId,
-                    'unique_id' => $row[7],
-                    'batch_code' => $row[8],
-                    'semester_code' => $row[9],
-                    'enrollment_date' => $row[10],
-                    'created_by' => $email,
-                    'updated_by' => $email,
-                    'created_date' => now(),
-                    'updated_date' => now(),
-                    'active' => 1
-                ]);
-            }
-            fclose($handle);
-            $mesg = "File uploaded successfully";
+                // Prepare a batch insert array
+                $usersData = [];
+                $studentsData = [];
+
+                while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+                    // Fetch related IDs
+                    $entityID = DB::table('entity')->whereRaw('LOWER(entity_name) = ?', [strtolower($row[3])])->value('entity_id');
+                    $schoolId = DB::table('school')->whereRaw('LOWER(school_name) = ?', [strtolower($row[4])])->value('school_id');
+                    $courseId = DB::table('courses')->whereRaw('LOWER(course_name) = ?', [strtolower($row[5])])->value('course_id');
+                    $programId = DB::table('program')->whereRaw('LOWER(program_name) = ?', [strtolower($row[6])])->value('program_id');
+                    $convertedDate = Carbon::createFromFormat('d-m-Y', $row[10])->format('Y-m-d');
+                    // Check if the student already exists
+                    $studentExists = DB::table('students')->whereRaw('LOWER(unique_id) = ?', [strtolower($row[7])])->exists();
+
+                    if (!$studentExists) {
+                        // Prepare user data
+                        $userId = DB::table('users')->insertGetId([
+                            'full_name' => $row[0],
+                            'email' => $row[1],
+                            'phone' => $row[2],
+                            'fk_role_id' => $roleId,
+                            'created_by' => $email,
+                            'updated_by' => $email,
+                            'created_date' => now(),
+                            'updated_date' => now(),
+                            'active' => 1,
+                        ]);
+
+                        // Prepare student data
+                        $studentsData[] = [
+                            'fk_entity_id' => $entityID,
+                            'fk_school_id' => $schoolId,
+                            'fk_course_id' => $courseId,
+                            'fk_program_id' => $programId,
+                            'fk_user_id' => $userId,
+                            'unique_id' => $row[7],
+                            'batch_code' => $row[8],
+                            'semester_code' => $row[9],
+                            'enrollment_date' => $convertedDate,
+                            'created_by' => $email,
+                            'updated_by' => $email,
+                            'created_date' => now(),
+                            'updated_date' => now(),
+                            'active' => 1,
+                        ];
+                    }
+                }
+
+                // Batch insert student data
+                if (!empty($studentsData)) {
+                    DB::table('students')->insert($studentsData);
+                }
+
+                fclose($handle);
+                $mesg = "File uploaded successfully";
+                return response()->json(['message' => $mesg]);
+            } else {
+                $mesg = "Error in uploading file";
+                return response()->json(['message' => 'Error reading the file.']);
+            }            
         }
-        else
-        {
-            $mesg = "Error in uploading file";
-        }
-
-        return response()->json(['message' => $mesg]);
-
+        return response()->json(['message' => 'No file uploaded.'], 400);
     }
 
     public function DownloadStudentTemplate()
@@ -315,8 +340,8 @@ class CROController extends Controller
                 'School' => $user->school_name,
                 'Program Code' => $user->course_code,
                 'Batch Code' => $user->batch_code,
-                'Semester' => $user->semester,
-                'Enrollment Date' => $user->enrollment_datr,
+                'Semester' => $user->semester_code,
+                'Enrollment Date' => $user->enrollment_date,
                 'Optin' => $user->OPTIN
             );
         }

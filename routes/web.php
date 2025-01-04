@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CROController;
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -56,11 +54,14 @@ Route::get('get-city', [HomeController::class, 'GetCity']);
 Route::get('thankYou', [HomeController::class, 'ThankYou']);
 
 Route::get('student-upload', [CROController::class, 'BulkUpload']);
+
 Route::get('get-school', [CROController::class, 'GetSchool']);
 Route::get('get-course', [CROController::class, 'GetCourse']);
-Route::get('view-student-details', [Crocontroller::class, 'ViewStudentDetails']);
-Route::get('download-student-details/{entity_id?}/{school_id?}/{course_id?}/{optin?}', [Crocontroller::class, 'DownloadStudentDetails']);
-Route::get('upload-student-data', [Crocontroller::class, 'UploadStudent']);
-Route::get('download-student-data-template', [Crocontroller::class, 'DownloadStudentTemplate']);
+Route::get('view-student-details', [CROController::class, 'ViewStudentDetails']);
+Route::get('download-student-details/{entity_id?}/{school_id?}/{course_id?}/{optin?}', [CROController::class, 'DownloadStudentDetails']);
+Route::post('/upload.student.data', [CROController::class, 'UploadStudent'])->name('upload.student.data');
+Route::get('download-student-data-template', [CROController::class, 'DownloadStudentTemplate']);
+Route::get('view-company', [CROController::class, 'ViewCompany']);
+
 
 
