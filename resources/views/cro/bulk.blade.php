@@ -1,7 +1,7 @@
 @extends('cro.cro-master')
 
 @section('cro-content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <style>
         /* General Styles */
         body {
@@ -113,12 +113,7 @@
     </div>
 
 <script type="text/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
+   
     $('#uploadForm').on('submit', function(e) {
     e.preventDefault();
 
@@ -138,7 +133,7 @@
     formData.append('studentFile', file);
 
     $.ajax({
-        url: "{{ route('upload.student.data') }}",
+        url: "/upload.student.data",
         method: "POST",
         type: "POST",
         data: formData,

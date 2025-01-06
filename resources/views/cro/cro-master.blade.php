@@ -16,6 +16,9 @@
         <link rel="stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
         <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
         <script src="https://cdn.tutorialjinni.com/notify/0.4.2/notify.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+        <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -242,9 +245,10 @@
             <div class="container mt-3">
                 <!-- Top Buttons -->
                 <div class="d-flex justify-content-between mb-3">
-                    <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">View Data</a>
-                    <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Upload Data</a>
+                    <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">Student Reports</a>
+                    <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Student Upload</a>
                     <a href="{{ url('view-company') }}" class="btn btn-danger btn-spacing">Recruiter</a>
+                    <a href="{{ url('company-report') }}" class="btn btn-danger btn-spacing">Company Reports</a>
                 </div>            
                 @yield('cro-content')
             </div>
@@ -263,4 +267,7 @@
             <p>Made with AAFT Technologies</p>
         </footer>
     </body>
+    <script type="text/javascript">
+        
+    </script>
 </html>

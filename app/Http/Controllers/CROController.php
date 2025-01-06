@@ -68,7 +68,12 @@ class CROController extends Controller
 
     public function ViewCompany()
     {
-        return view('cro.add-company');
+        $entityList = DB::select("SELECT * FROM entity");
+        $programList = DB::select("SELECT * FROM program");
+        $industrySectorList = DB::select("SELECT * FROM industry_sector");
+        $industryLocationList = DB::select("SELECT * FROM industry_location");
+        //return response()->json(['entityList' => $entityList, 'programList' => $programList, 'industrySectorList' => $industrySectorList, 'industryLocationList' => $industryLocationList]);
+        return view('cro.add-company', compact(['entityList', 'programList', 'industrySectorList', 'industryLocationList']));
     }
 
     public function GetSchool(Request $request)
@@ -88,9 +93,7 @@ class CROController extends Controller
     public function UploadStudent(Request $req)
     {        
         $email = session('username');
-        $req->validate([
-            'studentFile' => 'required|file|mimes:csv,txt|max:2048',
-        ]);
+        
         if ($req->hasFile('studentFile')) {
             $file = $req->file('studentFile');
             $path = $file->getRealPath();
@@ -360,18 +363,18 @@ class CROController extends Controller
     public function AutoCompleteCompany(Request $req)
     {
         $companyName = $req->get('query');
-        $companyNameList = DB::select("SELECT comp_name FROM company_details WHERE comp_name LIKE '%$companyName%'");
-
+        $companyNameList = DB::table('company_details')->where('comp_name', 'LIKE', "%{$companyName}%")->pluck('comp_name');
         return response()->json($companyNameList);
     }
 
     public function CheckCompany(Request $req)
     {
         $compName = $req->compName;
-        $compId = DB::table('company_details')->where('comp_name', '=', $compName)->value('comp_id');
+        $compId = DB::table('company_details')->whereRaw('LOWER(comp_name) = ?', [strtolower($compName)])->value('comp_id');
+        
         if($compId != 0)
         {
-            $compLeadList = DB::select("SELECT cd.comp_name, e.entity_name, s.school_name, c.course_name, p.program_name, u.email, ind.sector_name, l.industry_name, 
+            $compLeadList = DB::select("SELECT cd.comp_id, cd.comp_name, e.entity_name, s.school_name, c.course_name, p.program_name, u.email, ind.sector_name, l.industry_name, 
                                                 cld.resource_person, cld.designation, cld.primary_email, cld.primary_phone, cld.leadsource, cld.lead_stage, 
                                                 cld.industry_engagement FROM company_lead_details cld
                                         LEFT JOIN company_details cd ON cld.fk_comp_id = cd.comp_id
@@ -384,7 +387,7 @@ class CROController extends Controller
                                         LEFT JOIN industry_location l ON cld.fk_location_id = l.industry_loc_id
                                         WHERE cd.comp_id = ?", [$compId]);
 
-            return response()->json(['compLeadList' => $compLeadList]);
+            return response()->json(['compLeadList' => $compLeadList, 'compId' => $compId]);
         }
         else 
         {
@@ -394,87 +397,140 @@ class CROController extends Controller
 
     public function AddCompany(Request $req)
     {
-        $companyName = $req->compName;
+        $companyName = $req->companyName;
         $numbers = "";
         $lastCompId = DB::table('company_details')->orderBy('comp_unique_id', 'desc')->value('comp_unique_id');
-        if($lastCompId != "")
-        {
-            if (preg_match_all('/\d+/', $text, $matches)) {
-                $numbers = $matches[0]; // Array of all numbers
+
+        if (!empty($lastCompId)) {
+            // Extract numeric part from the lastCompId
+            if (preg_match_all('/\d+/', $lastCompId, $matches)) {
+                $numbers = (int)$matches[0][0]; // Convert the numeric part to integer
+                $numbers += 1; // Increment the number
             }
-            $numbers = $numbers + 1;
+        } else {
+            $numbers = 1001; // Default starting ID
         }
-        else 
-        {
-            $numbers = "1001";
-        }
-        
-        $uniqueId = "AAFT" + $numbers;
-        DB::table('students')->insert([
+
+        $uniqueId = "AAFT" . $numbers; // Concatenate prefix with number
+
+        // Insert new company record into company_details table
+        $compId = DB::table('company_details')->insertGetId([
             'comp_unique_id' => $uniqueId,
             'comp_name' => $companyName,
-            'comp_category' => $req->compCategory,
-            'comp_website' => $req->compWebsite,
-            'comp_month' => $req->compMonth,
-            'comp_year' => $req->compYear,
-            'created_by' => session('username'),
-            'updated_by' => session('username'),
+            'comp_category' => $req->companyCategory,
+            'comp_website' => $req->companyWebsite,
+            'comp_month' => $req->companyMonth,
+            'comp_year' => $req->companyYear,
+            'created_by' => "itcoordinator@aaft.com",
+            'updated_by' => "itcoordinator@aaft.com",
             'created_date' => now(),
             'updated_date' => now(),
             'active' => 1
-        ]); 
+        ]);
 
-        return response()->json(['mesg' => 'Data inserted successfully']);
+        return response()->json(['mesg' => $compId]);
     }
-
-    public function GetCompanyLead()
-    {
-        $entityList = DB::select("SELECT * FROM entity");
-        $programList = DB::select("SELECT * FROM program");
-        $industrySectorList = DB::select("SELECT * FROM industry_sector");
-        $industryLocationList = DB::select("SELECT * FROM industry_location");
-        return response()->json(['entityList' => $entityList, 'programList' => $programList, 'industrySectorList' => $industrySectorList, 'industryLocationList' => $industryLocationList]);
-    }
-    
 
     public function AddCompanyLead(Request $req)
     {
+       $compId = $req->compId;
+       $entityId = $req->entityValId;
+       $schoolId = $req->schoolValId;
+       $courseId = $req->courseValId;
+       $programTypeId = $req->programValId;
+       $resourcePerson = $req->resourcePersonValId;
+       $designation = $req->designationValId;
+       $email = $req->emailValId;
+       $phone = $req->phoneValId;
+       $industrySector = $req->industrySectorValId;
+       $industryLocation = $req->industryLocationValId;
+       $leadSource = $req->leadSourceValId;
+       $leadStage = $req->leadStageValId;
+       $industryEngagementValId = $req->industryEngagementValId;
+       $numbers = "";
+       $spocId = DB::table('users')->where('email', 'itcoordinator@aaft.com')->value('user_id');
+       $lastCompId = DB::table('company_lead_details')->orderBy('comp_unique_id', 'desc')->value('comp_unique_id');
+
+        if (!empty($lastCompId)) {
+            // Extract numeric part from the lastCompId
+            if (preg_match_all('/\d+/', $lastCompId, $matches)) {
+                $numbers = (int)$matches[0][0]; // Convert the numeric part to integer
+                $numbers += 1; // Increment the number
+            }
+        } else {
+            $numbers = 1001; // Default starting ID
+        }
+
+        $uniqueId = "HR" . $numbers; // Concatenate prefix with number
+       
+       DB::table("company_lead_details")->insert([
+            'fk_comp_id' => $compId,
+            'fk_entity_id' => $entityId,
+            'fk_school_id' => $schoolId,
+            'fk_course_id' => $courseId,
+            'fk_program_id' => $programTypeId,
+            'resource_person' => $resourcePerson,
+            'designation' => $designation,
+            'primary_email' => $email,
+            'primary_phone' => $phone,
+            'fk_industry_sector_id' => $industrySector,
+            'fk_location_id' => $industryLocation,
+            'leadsource' => $leadSource,
+            'lead_stage' => $leadStage,
+            'industry_engagement' => $industryEngagementValId,
+            'fk_spoc_id' => $spocId,
+            'hr_unqiue_id' => $uniqueId,
+            'created_by' => "itcoordinator@aaft.com",
+            'updated_by' => "itcoordiantor@aaft.com",
+            'created_date' => now(),
+            'updated_date' => now(),
+            'active' => 1
+        ]);
+
+        $companyName = DB::table('company_details')->where('comp_id', $compId)->value('comp_name');
+        return response()->json(['mesg' => $companyName]);
+    }
+
+    public function CompanyReports()
+    {
+        //$user_id = DB::table('users')->where('email', session('username'))->value('user_id');
+        $companyList = DB::select("SELECT DISTINCT 
+    cd.comp_unique_id, 
+    cd.comp_name, 
+    cd.comp_category, 
+    cd.comp_website, 
+    cd.comp_month, 
+    cd.comp_year,
+    e.entity_name, 
+    sch.school_name, 
+    c.course_name, 
+    p.program_name, 
+    cld.resource_person, 
+    cld.designation, 
+    cld.primary_email, 
+    cld.primary_phone,
+    inds.sector_name, 
+    indl.industry_name, 
+    cld.leadsource, 
+    cld.lead_stage, 
+    cld.industry_engagement, 
+    cld.hr_unqiue_id, 
+    u.full_name 
+FROM company_details cd
+LEFT JOIN company_lead_details cld ON cd.comp_id = cld.fk_comp_id
+LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
+LEFT JOIN school sch ON cld.fk_school_id = sch.school_id
+LEFT JOIN courses c ON cld.fk_course_id = c.course_id
+LEFT JOIN program p ON cld.fk_program_id = p.program_id
+LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
+LEFT JOIN industry_sector inds ON cld.fk_industry_sector_id = inds.industry_sector_id
+LEFT JOIN industry_location indl ON cld.fk_location_id = indl.industry_loc_id
+WHERE cd.active = 1 
+  AND cd.created_by = ?", ["itcoordinator@aaft.com"]);
         
-    }
+        $entityList = DB::select("SELECT * FROM entity");
+        $programList = DB::select("SELECT * FROM program");
 
-    public function OnlineQuestionarie()
-    {
-        $onlineQuestionarieList = DB::select("SELECT s.state_name, c.city_name, a.qualification_name, cs.career_name, oqy.technical_skill, oqy.job_role, oqy.relevant_job, oqy.relevant_job, el.emp_loc_name,
-                                                wt.work_type_name, u.full_name, sch.school_name
-                                                FROM online_questionarie_yes oqy
-                                                LEFT JOIN state s ON s.state_id = oqy.fk_state_id
-                                                LEFT JOIN city c ON c.city_id = oqy.fk_city_id
-                                                LEFT JOIN academic_qualification a ON a.qualification_id = oqy.fk_qualification_id
-                                                LEFT JOIN employment_status emp ON emp.emp_status_id = oqy.fk_employment_status_id
-                                                LEFT JOIN career_support cs ON cs.career_id = oqy.fk_career_id 
-                                                LEFT JOIN employment_location el ON el.emp_loc_id = oqy.fk_emp_loc_id
-                                                LEFT JOIN work_type wt ON wt.work_type_id = oqy.fk_work_type_id
-                                                LEFT JOIN users u ON u.user_id = oqy.fk_user_id
-                                                LEFT JOIN school sch ON u.fk_school_id = sch.school_id");
-
-        return view('cro.dashboard', compact(['onlineQuestionarieList']));
-    }
-
-    public function OfflineQuestionarire()
-    {
-        $offlineQuestionarireList = DB::select("SELECT s.state_name, c.city_name, a.qualification_name, cs.career_name, oqy.technical_skill, oqy.job_role, oqy.relevant_job, oqy.relevant_job, el.emp_loc_name,
-                                                wt.work_type_name, u.full_name, sch.school_name
-                                                FROM online_questionarie_yes oqy
-                                                LEFT JOIN state s ON s.state_id = oqy.fk_state_id
-                                                LEFT JOIN city c ON c.city_id = oqy.fk_city_id
-                                                LEFT JOIN academic_qualification a ON a.qualification_id = oqy.fk_qualification_id
-                                                LEFT JOIN employment_status emp ON emp.emp_status_id = oqy.fk_employment_status_id
-                                                LEFT JOIN career_support cs ON cs.career_id = oqy.fk_career_id 
-                                                LEFT JOIN employment_location el ON el.emp_loc_id = oqy.fk_emp_loc_id
-                                                LEFT JOIN work_type wt ON wt.work_type_id = oqy.fk_work_type_id
-                                                LEFT JOIN users u ON u.user_id = oqy.fk_user_id
-                                                LEFT JOIN school sch ON u.fk_school_id = sch.school_id");
-
-        return view('cro.dashboard', compact(['offlineQuestionarireList']));
+        return view('cro.company-report', compact(['companyList', 'entityList', 'programList']));
     }
 }

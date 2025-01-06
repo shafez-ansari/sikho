@@ -64,7 +64,11 @@ Route::get('download-student-data-template', [CROController::class, 'DownloadStu
 Route::get('view-company', [CROController::class, 'ViewCompany']);
 Route::get('autocomplete-search', [CROController::class, 'AutoCompleteCompany']);
 Route::get('get-company-details', [CROController::class, 'CheckCompany']);
-
+Route::get('create-company', [CROController::class, 'AddCompany']);
+Route::get('create-company-lead', [CROController::class, 'AddCompanyLead']);
+Route::get('company-report', [CROController::class, 'CompanyReports']);
+Route::get('view-company-details', [CROController::class, 'CompanyReportDetails']);
+Route::get('download-company-details/{entity_id?}/{school_id?}/{course_id?}', [CROController::class, 'DownloadCompanyDetails']);
 
 
 
