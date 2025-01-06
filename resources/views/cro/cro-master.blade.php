@@ -44,7 +44,7 @@
             .container {
                 max-width: 900px;
                 margin: 30px auto;
-                padding: 15px;
+                padding: 0px;
                 text-align: inherit;
                 background-color: #fff;
                 border-radius: 10px;
@@ -229,6 +229,10 @@
                 max-height: 300px;
             }
         }
+        .mb-3 {
+    padding-left: 20px;
+    margin-bottom: 1rem !important;
+}
         </style>
     </head>
     <body>
@@ -244,7 +248,7 @@
             </div>
             <div class="container mt-3">
                 <!-- Top Buttons -->
-                <div class="d-flex justify-content-between mb-3">
+                <div class="justify-content-between mb-3">
                     <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">Student Reports</a>
                     <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Student Upload</a>
                     <a href="{{ url('view-company') }}" class="btn btn-danger btn-spacing">Recruiter</a>

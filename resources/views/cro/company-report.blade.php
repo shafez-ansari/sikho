@@ -59,6 +59,7 @@
             background-color: #343a40; /* Matches table-dark */
             color: white;
         }
+        
     </style>
         <!-- Form Section -->
         <div class="card mb-3">
