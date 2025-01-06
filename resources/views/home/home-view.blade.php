@@ -163,7 +163,7 @@
     </head>
     <body>
         <div class="header">
-            <h1>AAFT CORPORATE RESOURCE CENTER</h1>
+            <h1>AAFT Connect</h1>
             <p>Students Placement Portal 2025</p>
         </div>
         <div class="container">
@@ -193,9 +193,9 @@
                         </div>
                     </div>
 
-                    <a class="button" id="resendBtn" style="display: none; color: #28a745; font-size: 12px; cursor: pointer; margin-bottom: 15px;" onclick="resendOtp()">Resend</a>
+                    <a class="button" id="resendBtn" style="display: none; color:rgb(0, 0, 0); font-size: 12px; cursor: pointer; margin-bottom: 15px;" onclick="resendOtp()">Resend</a>
 
-                    <button id="loginSubmit" style="display: none; width: 100%; background-color: #333; color: white; border: none; padding: 10px 0; border-radius: 4px; cursor: pointer; font-size: 14px;" onclick="submitOtp()">Submit</button>
+                    <button id="loginSubmit" style="display: none; width: 100%; background-color: #f80901; color: white; border: none; padding: 10px 0; border-radius: 4px; cursor: pointer; font-size: 14px;" onclick="submitOtp()">Submit</button>
                 </div>
             </div>
             <div class="illustration">

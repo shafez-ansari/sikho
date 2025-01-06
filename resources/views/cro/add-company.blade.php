@@ -389,6 +389,8 @@
                             
                         }
                         $("#newRecordId").show();
+                        $("#companyFormId").hide();
+                        $("#companyFormId").hide();
                         }
                         else {
                             compLeadBodyId.append('<tr><td colspan="7" class="text-center">No records found</td></tr>');
