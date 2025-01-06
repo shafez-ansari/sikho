@@ -59,9 +59,14 @@
             background-color: #343a40; /* Matches table-dark */
             color: white;
         }
+        .mb-3 {
+    padding-top: 15px;
+    margin-bottom: 1rem !important;
+}
+
     </style>
         <!-- Form Section -->
-        <div class="card mb-3">
+        <div class="card mb-3 ">
             <div class="card-header bg-dark text-white">
                 View Student Data
             </div>

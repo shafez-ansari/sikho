@@ -41,7 +41,7 @@
             margin-bottom: 20px;
         }
         .form-table-wrapper {
-            display: flex;
+            display: grid;
             align-items: flex-start;
             gap: 20px;
         }
@@ -114,7 +114,7 @@
                 <form>
                 <input type="text" id="compSearch" placeholder="Enter new company name"> 
                 <span class="text-danger" id="compSearchValId"></span>                   
-                    <button type="button"  onclick="showDetails('');">Show Details</button>
+                    <button type="button" style="max-width: 25%;" onclick="showDetails('');">Show Details</button>
                     <a id="createCompanyId" style="display:none;" onclick="newCompany();" class="add-record">Add New Company</a>
                 </form>
             </div>
