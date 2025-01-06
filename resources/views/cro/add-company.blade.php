@@ -399,6 +399,8 @@
                         $("#compLeadDetailId").hide();
                         $("#newRecordId").hide();
                         $("#compSearchValId").empty().text(data.compLeadList);
+                        $("#companyFormId").hide();
+                        $("#companyLeadFormId").hide();
                         $("#createCompanyId").show();
                     }
                 }
