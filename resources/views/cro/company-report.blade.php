@@ -213,9 +213,9 @@
                     $("#companyTableId").empty();
                     $("#companyTableId").append('<thead class="table-dark"><tr><th>Company Unique ID</th><th>Company Name</th><th>Category</th><th>Website</th><th>Entity</th><th>School</th><th>Course</th><th>Program Type</th><th>HR Unique ID</th><th>Resource Person</th><th>Designation</th><th>Email</th><th>Phone</th><th>Industry Sector</th><th>Location</th><th>Leadsource</th><th>Lead Stage</th><th>Industry Engagement</th></tr></thead>');
                     $("#companyTableId").append('<tbody id="studentTableBodyId"></tbody>'); 
-                    for(var i = 0; i < data.userList.length;i++){ 
-                        var user_item_el = '<tr><td>'+ data.userList[i]['comp_unique_id'] +'</td><td>'+ data.userList[i]['comp_name'] +'</td><td>'+ data.userList[i]['comp_category'] +
-                        '</td><td>'+ data.userList[i]['comp_website'] +'</td><td>'+ data.userList[i]['entity_name'] +'</td><td>'+ data.userList[i]['school_name'] +'</td><td>'+ data.userList[i]['course_name'] +'</td><td>'+ data.userList[i]['program_name'] +'</td><td>'+ data.userList[i]['hr_unqiue_id'] +'</td><td>'+ data.userList[i]['resource_person'] +'</td><td>'+ data.userList[i]['designation'] +'</td><td>'+ data.userList[i]['primary_email'] +'</td><td>'+ data.userList[i]['primary_phone'] +'</td><td>'+ data.userList[i]['sector_name'] +'</td><td>'+ data.userList[i]['industry_name'] +'</td><td>'+ data.userList[i]['leadsource'] +'</td><td>'+ data.userList[i]['lead_stage'] +'</td><td>'+ data.userList[i]['industry_engagement'] +'</td></tr>';
+                    for(var i = 0; i < data.companyList.length;i++){ 
+                        var user_item_el = '<tr><td>'+ data.companyList[i]['comp_unique_id'] +'</td><td>'+ data.companyList[i]['comp_name'] +'</td><td>'+ data.companyList[i]['comp_category'] +
+                        '</td><td>'+ data.companyList[i]['comp_website'] +'</td><td>'+ data.companyList[i]['entity_name'] +'</td><td>'+ data.companyList[i]['school_name'] +'</td><td>'+ data.companyList[i]['course_name'] +'</td><td>'+ data.companyList[i]['program_name'] +'</td><td>'+ data.companyList[i]['hr_unqiue_id'] +'</td><td>'+ data.companyList[i]['resource_person'] +'</td><td>'+ data.companyList[i]['designation'] +'</td><td>'+ data.companyList[i]['primary_email'] +'</td><td>'+ data.companyList[i]['primary_phone'] +'</td><td>'+ data.companyList[i]['sector_name'] +'</td><td>'+ data.companyList[i]['industry_name'] +'</td><td>'+ data.companyList[i]['leadsource'] +'</td><td>'+ data.companyList[i]['lead_stage'] +'</td><td>'+ data.companyList[i]['industry_engagement'] +'</td></tr>';
                         $("#companyTableId").append(user_item_el);
                     }
                     $('#companyTableId').DataTable();                        
@@ -228,7 +228,6 @@
         var entity_id = $('#entity').val();
         var school_id = $('#school').val();
         var course_id = $('#course').val();
-        var optin = $('#optin').val();
 
         window.location.href = "{{ url('download-company-details') }}" + "/" + entity_id + "/" + school_id + "/" + course_id;
     }

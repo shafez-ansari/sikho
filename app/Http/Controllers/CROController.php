@@ -495,42 +495,161 @@ class CROController extends Controller
     {
         //$user_id = DB::table('users')->where('email', session('username'))->value('user_id');
         $companyList = DB::select("SELECT DISTINCT 
-    cd.comp_unique_id, 
-    cd.comp_name, 
-    cd.comp_category, 
-    cd.comp_website, 
-    cd.comp_month, 
-    cd.comp_year,
-    e.entity_name, 
-    sch.school_name, 
-    c.course_name, 
-    p.program_name, 
-    cld.resource_person, 
-    cld.designation, 
-    cld.primary_email, 
-    cld.primary_phone,
-    inds.sector_name, 
-    indl.industry_name, 
-    cld.leadsource, 
-    cld.lead_stage, 
-    cld.industry_engagement, 
-    cld.hr_unqiue_id, 
-    u.full_name 
-FROM company_details cd
-LEFT JOIN company_lead_details cld ON cd.comp_id = cld.fk_comp_id
-LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
-LEFT JOIN school sch ON cld.fk_school_id = sch.school_id
-LEFT JOIN courses c ON cld.fk_course_id = c.course_id
-LEFT JOIN program p ON cld.fk_program_id = p.program_id
-LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
-LEFT JOIN industry_sector inds ON cld.fk_industry_sector_id = inds.industry_sector_id
-LEFT JOIN industry_location indl ON cld.fk_location_id = indl.industry_loc_id
-WHERE cd.active = 1 
-  AND cd.created_by = ?", ["itcoordinator@aaft.com"]);
+                                    cd.comp_unique_id, 
+                                    cd.comp_name, 
+                                    cd.comp_category, 
+                                    cd.comp_website, 
+                                    cd.comp_month, 
+                                    cd.comp_year,
+                                    e.entity_name, 
+                                    sch.school_name, 
+                                    c.course_name, 
+                                    p.program_name, 
+                                    cld.resource_person, 
+                                    cld.designation, 
+                                    cld.primary_email, 
+                                    cld.primary_phone,
+                                    inds.sector_name, 
+                                    indl.industry_name, 
+                                    cld.leadsource, 
+                                    cld.lead_stage, 
+                                    cld.industry_engagement, 
+                                    cld.hr_unqiue_id, 
+                                    u.full_name 
+                                FROM company_details cd
+                                LEFT JOIN company_lead_details cld ON cd.comp_id = cld.fk_comp_id
+                                LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
+                                LEFT JOIN school sch ON cld.fk_school_id = sch.school_id
+                                LEFT JOIN courses c ON cld.fk_course_id = c.course_id
+                                LEFT JOIN program p ON cld.fk_program_id = p.program_id
+                                LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
+                                LEFT JOIN industry_sector inds ON cld.fk_industry_sector_id = inds.industry_sector_id
+                                LEFT JOIN industry_location indl ON cld.fk_location_id = indl.industry_loc_id
+                                WHERE cd.active = 1 
+                                AND cd.created_by = ?", ["itcoordinator@aaft.com"]);
         
         $entityList = DB::select("SELECT * FROM entity");
         $programList = DB::select("SELECT * FROM program");
 
         return view('cro.company-report', compact(['companyList', 'entityList', 'programList']));
+    }
+
+    public function CompanyReportDetails(Request $req)
+    {
+        $entityID = $req->entity_id;
+        $schoolID = $req->school_id;
+        $courseID = $req->course_id;
+        //$user_id = DB::table('users')->where('email', session('username'))->value('user_id');
+        $companyList = DB::select("SELECT DISTINCT 
+                                    cd.comp_unique_id, 
+                                    cd.comp_name, 
+                                    cd.comp_category, 
+                                    cd.comp_website, 
+                                    cd.comp_month, 
+                                    cd.comp_year,
+                                    e.entity_name, 
+                                    sch.school_name, 
+                                    c.course_name, 
+                                    p.program_name, 
+                                    cld.resource_person, 
+                                    cld.designation, 
+                                    cld.primary_email, 
+                                    cld.primary_phone,
+                                    inds.sector_name, 
+                                    indl.industry_name, 
+                                    cld.leadsource, 
+                                    cld.lead_stage, 
+                                    cld.industry_engagement, 
+                                    cld.hr_unqiue_id, 
+                                    u.full_name 
+                                FROM company_details cd
+                                LEFT JOIN company_lead_details cld ON cd.comp_id = cld.fk_comp_id
+                                LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
+                                LEFT JOIN school sch ON cld.fk_school_id = sch.school_id
+                                LEFT JOIN courses c ON cld.fk_course_id = c.course_id
+                                LEFT JOIN program p ON cld.fk_program_id = p.program_id
+                                LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
+                                LEFT JOIN industry_sector inds ON cld.fk_industry_sector_id = inds.industry_sector_id
+                                LEFT JOIN industry_location indl ON cld.fk_location_id = indl.industry_loc_id
+                                WHERE cd.active = 1 
+                                AND cd.created_by = ? AND (? IS NULL OR cld.fk_entity_id = ?) AND (? IS NULL OR cld.fk_school_id = ?) AND (? IS NULL OR cld.fk_course_id = ?)", ["itcoordinator@aaft.com", $entityID, $entityID, $schoolID, $schoolID, $courseID, $courseID]);
+        
+        return response()->json(['companyList' => $companyList]);
+    }
+
+    public function DownloadCompanyDetails(Request $req)
+    {
+        $entityID = $req->entity_id;
+        $schoolID = $req->school_id;
+        $courseID = $req->course_id;
+        $companyList = DB::select("SELECT DISTINCT 
+                                    cd.comp_unique_id, 
+                                    cd.comp_name, 
+                                    cd.comp_category, 
+                                    cd.comp_website, 
+                                    cd.comp_month, 
+                                    cd.comp_year,
+                                    e.entity_name, 
+                                    sch.school_name, 
+                                    c.course_name, 
+                                    p.program_name, 
+                                    cld.resource_person, 
+                                    cld.designation, 
+                                    cld.primary_email, 
+                                    cld.primary_phone,
+                                    inds.sector_name, 
+                                    indl.industry_name, 
+                                    cld.leadsource, 
+                                    cld.lead_stage, 
+                                    cld.industry_engagement, 
+                                    cld.hr_unqiue_id, 
+                                    u.full_name 
+                                FROM company_details cd
+                                LEFT JOIN company_lead_details cld ON cd.comp_id = cld.fk_comp_id
+                                LEFT JOIN entity e ON cld.fk_entity_id = e.entity_id
+                                LEFT JOIN school sch ON cld.fk_school_id = sch.school_id
+                                LEFT JOIN courses c ON cld.fk_course_id = c.course_id
+                                LEFT JOIN program p ON cld.fk_program_id = p.program_id
+                                LEFT JOIN users u ON cld.fk_spoc_id = u.user_id
+                                LEFT JOIN industry_sector inds ON cld.fk_industry_sector_id = inds.industry_sector_id
+                                LEFT JOIN industry_location indl ON cld.fk_location_id = indl.industry_loc_id
+                                WHERE cd.active = 1 
+                                AND cd.created_by = ? AND (? IS NULL OR cld.fk_entity_id = ?) AND (? IS NULL OR cld.fk_school_id = ?) AND (? IS NULL OR cld.fk_course_id = ?)", ["itcoordinator@aaft.com", $entityID, $entityID, $schoolID, $schoolID, $courseID, $courseID]);
+        
+        $filename = "CompanyDetails.csv";
+        $campaignArray[] = array('Company Unique ID', 'Company Name','Category', 'Website', 'Entity', 'School', 'Course', 'Program Type', 'HR Unique ID', 'Designation', 'Email', 'Phone', 'Industry Sector', 'Location', 'Leadsource', 'Lead Stage', 'Industry Engagement');
+        foreach($companyList as $user)
+        {
+            $campaignArray[] = array(
+                'Company Unique ID' => $user->comp_unique_id,
+                'Company Name' => $user->comp_name,
+                'Category' => $user->comp_category,
+                'Website' => $user->comp_website,
+                'Entity' => $user->entity_name,
+                'School' => $user->school_name,
+                'Course' => $user->course_name,
+                'Program Type' => $user->program_name,
+                'HR Unique ID' => $user->hr_unqiue_id,
+                'Designation' => $user->designation,
+                'Email' => $user->primary_email,
+                'Phone' => $user->primary_phone,
+                'Industry Sector' => $user->sector_name,
+                'Location' => $user->industry_name,
+                'Leadsource' => $user->leadsource,
+                'Lead Stage' => $user->lead_stage,
+                'Industry Engagement' =>$user->industry_engagement                
+            );
+        }
+        $csvContent = '';
+        foreach ($campaignArray as $row)
+        {
+            $csvContent .= implode(',', $row) . "\n";
+        }
+
+        return Response::make($csvContent, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
+        
     }
 }
