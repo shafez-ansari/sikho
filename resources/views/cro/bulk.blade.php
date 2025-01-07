@@ -48,9 +48,9 @@
             align-items: center;
             justify-content: center;
             border: 2px dashed #ccc;
-            margin: 20px auto;
+            margin: 40px auto;
             padding: 40px;
-            max-width: 400px;
+            max-width: 700px;
             border-radius: 10px;
             background-color: #f9f9f9;
             color: #333;
@@ -99,7 +99,7 @@
         Upload Data
     </div>
     <div >
-        <a style="float:right;" href="{{url('/download-student-data-template')}}" >Download Template</a>
+        <a style="float:right; padding-top: 10px;" href="{{url('/download-student-data-template')}}" >Download Template</a>
     </div>
     <div class="upload-area">
     <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
