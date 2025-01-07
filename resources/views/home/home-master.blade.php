@@ -24,6 +24,7 @@
                 color: #fff;
                 padding: 20px;
                 text-align: center;
+                position: relative;
             }
             .header h1 {
                 margin: 0;
@@ -32,6 +33,23 @@
             .header p {
                 margin: 0;
                 font-size: 1.2rem;
+            }
+            .logout-button {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+            }
+            .logout-button .btn {
+                padding: 10px 15px;
+                font-size: 14px;
+                background-color: #d10505;
+                border: none;
+                color: #fff;
+                border-radius: 5px;
+                text-decoration: none;
+            }
+            .logout-button .btn:hover {
+                background-color: #ff0000;
             }
             .container {
                 max-width: 900px;
@@ -120,10 +138,10 @@
                 text-align: center;
             }
             .btn-primary {
-    color: #fff;
-    background-color: #d10505;
-    border-color: #ff0000;
-}
+                color: #fff;
+                background-color: #d10505;
+                border-color: #ff0000;
+            }
             /* Responsive Design */
             @media screen and (max-width: 768px) {
                 .container {
@@ -163,8 +181,11 @@
     </head>
     <body>
         <div class="header">
-            <h1>AAFT CORPORATE RESOURCE CENTER</h1>
+            <h1>AAFT Connect</h1>
             <p>Students Placement Portal 2025</p>
+            <div class="logout-button">
+                <a href="/logout" class="btn btn-primary">Logout</a>
+            </div>
         </div>
         <div class="container">
             <div class="logos">
@@ -189,9 +210,3 @@
         </footer>
     </body>
 </html>
-
-
-
-
-
-
