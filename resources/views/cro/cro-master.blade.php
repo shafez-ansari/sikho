@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -32,6 +31,12 @@
                 color: #fff;
                 padding: 20px;
                 text-align: center;
+                position: relative;
+            }
+            .logout-button {
+                position: absolute;
+                top: 20px;
+                right: 20px;
             }
             .header h1 {
                 margin: 0;
@@ -239,6 +244,9 @@
         <div class="header">
             <h1>AAFT CONNECT</h1>
             <p>Students Placement Portal 2025</p>
+            <div class="logout-button">
+                <a href="{{ url('logout') }}" class="btn btn-danger">Logout</a>
+            </div>
         </div>
         <div class="container">
             <div class="logos">
