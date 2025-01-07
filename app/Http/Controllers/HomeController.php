@@ -13,8 +13,7 @@ class HomeController extends Controller
 {
     public function Login(Request $req)
     {
-        if(session('username') != "")
-        {
+        
             $email = $req->email;
             $userList = DB::select("SELECT u.user_id FROM users u
                                     LEFT JOIN students s ON u.user_id = s.student_id WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
@@ -49,17 +48,13 @@ class HomeController extends Controller
 
                 return response()->json(['loginMsg' => 'OTP generated']);
             }
-        }
-        else 
-        {
-            return view('home.home-view');
-        }
+        
+        
     }
 
     public function SubmitOtp(Request $req)
     {
-        if(session('username') != "")
-        {
+        
             $email = $req->email;
             $otp = $req->otp;
             $userList = DB::select("SELECT * FROM users u
@@ -117,17 +112,12 @@ class HomeController extends Controller
                     return redirect()->action([HomeController::class, 'ITDetails']);
                 }
             }
-        }
-        else 
-        {
-            return view('home.home-view');
-        }
+        
     }
 
     public function ResendOtp(Request $req)
     {
-        if(session('username') != "")
-        {
+        
             $email = $req->email;
             $userList = DB::select("SELECT * FROM users u
                                     LEFT JOIN students s ON u.user_id = s.fk_user_id
@@ -160,11 +150,7 @@ class HomeController extends Controller
             });
 
             return response()->json(['loginMsg' => 'OTP resend generated']);
-        }
-        else
-        {
-            return view('home.home-view');
-        }
+        
     }
 
     public function StudentDetails()

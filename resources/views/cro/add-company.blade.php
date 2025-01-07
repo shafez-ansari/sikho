@@ -472,7 +472,8 @@
                     success: function(response) {
                         alert("Company created successfully.");
                         $("#hdnCompanyId").val(response.mesg);
-                        $("#companyFormId").show();
+                        $("#companyFormId").hide();
+                        $("#compSearchValId").empty().text('');
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON.mesg);

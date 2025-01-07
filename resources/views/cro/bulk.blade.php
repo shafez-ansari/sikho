@@ -131,6 +131,7 @@
 
     var formData = new FormData();
     formData.append('studentFile', file);
+    formData.append('_token', '{{ csrf_token() }}');
 
     $.ajax({
         url: "/upload.student.data",

@@ -521,7 +521,7 @@ class CROController extends Controller
         $industryEngagementValId = $req->industryEngagementValId;
         $numbers = "";
         $spocId = DB::table('users')->where('email', session('username'))->value('user_id');
-        $lastCompId = DB::table('company_lead_details')->orderBy('comp_unique_id', 'desc')->value('comp_unique_id');
+        $lastCompId = DB::table('company_lead_details')->orderBy('hr_unqiue_id', 'desc')->value('hr_unqiue_id');
 
             if (!empty($lastCompId)) {
                 // Extract numeric part from the lastCompId
