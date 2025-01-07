@@ -99,7 +99,7 @@
         Upload Data
     </div>
     <div >
-        <a style="float:right; padding-top: 10px;" href="{{url('/download-student-data-template')}}" >Download Template</a>
+        <a style="float:right; padding-top: 10px; margin-right: 100px;" href="{{url('/download-student-data-template')}}" >Download Template</a>
     </div>
     <div class="upload-area">
     <img src="{{url('/images/bul.png')}}" alt="Upload Icon">

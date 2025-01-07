@@ -47,7 +47,7 @@
                 font-size: 1.2rem;
             }
             .container {
-                max-width: 900px;
+                max-width: 1320px;
                 margin: 30px auto;
                 padding: 0px;
                 text-align: inherit;
