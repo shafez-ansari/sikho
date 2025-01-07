@@ -49,7 +49,7 @@
             .container {
                 max-width: 900px;
                 margin: 30px auto;
-                padding: 0px;
+                padding: 15px;
                 text-align: inherit;
                 background-color: #fff;
                 border-radius: 10px;

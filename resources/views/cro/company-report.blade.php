@@ -6,7 +6,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
-            max-width: 1600px;
             margin: auto;
             font-size: 14px; /* Set global font size */
         }
