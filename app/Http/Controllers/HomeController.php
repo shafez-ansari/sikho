@@ -482,5 +482,11 @@ class HomeController extends Controller
             return view('home.home-view');
         }
     }
+
+    public function Logout()
+    {        
+        session()->flush();
+        return view('home.home-view');
+    }
     
 }

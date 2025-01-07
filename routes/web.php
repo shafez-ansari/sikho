@@ -39,6 +39,8 @@ Route::get('/otp-mail', function(){
 //     return 'Test email sent successfully!';
 // });
 
+Route::get('logout', [HomeController::class, 'Logout']);
+
 Route::get('verify-email', [HomeController::class, 'Login']);
 Route::get('resend-otp', [HomeController::class, 'ResendOtp']);
 Route::get('submit-otp', [HomeController::class, 'SubmitOtp']);
