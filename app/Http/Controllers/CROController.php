@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Response;
+use Image;
+use Illuminate\Support\Facades\Storage;
 
 class CROController extends Controller
 {
     public function CRODetails()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityList = DB::select("SELECT * FROM entity");
             // $school = DB::select("SELECT * FROM school");
@@ -70,7 +72,7 @@ class CROController extends Controller
 
     public function BulkUpload()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             return view('cro.bulk');
         }
@@ -80,9 +82,22 @@ class CROController extends Controller
         }
     }
 
+    public function BulkImageUpload()
+    {
+        if(session('username') != "" && session('role') == "CRO")
+        {
+            $entityList = DB::select("SELECT * FROM entity where active = 1");
+            return view('cro.bulk', compact(['entityList']));
+        }
+        else
+        {
+            return view('home.home-view');
+        }
+    }
+
     public function ViewCompany()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityList = DB::select("SELECT * FROM entity");
             $programList = DB::select("SELECT * FROM program");
@@ -113,7 +128,7 @@ class CROController extends Controller
 
     public function UploadStudent(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {        
             $email = session('username');
             
@@ -198,7 +213,7 @@ class CROController extends Controller
 
     public function DownloadStudentTemplate()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $filename = "StudentTemplate.csv";
             $campaignArray[] = array(
@@ -246,7 +261,7 @@ class CROController extends Controller
 
     public function ViewStudentDetails(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityId = $req->entity_id;
             $schoolId = $req->school_id;
@@ -315,7 +330,7 @@ class CROController extends Controller
 
     public function DownloadStudentDetails(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityId = $req->entity_id;
             $schoolId = $req->school_id;
@@ -411,7 +426,7 @@ class CROController extends Controller
 
     public function AutoCompleteCompany(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $companyName = $req->get('query');
             $companyNameList = DB::table('company_details')->where('comp_name', 'LIKE', "%{$companyName}%")->pluck('comp_name');
@@ -425,7 +440,7 @@ class CROController extends Controller
 
     public function CheckCompany(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $compName = $req->compName;
             $compId = DB::table('company_details')->whereRaw('LOWER(comp_name) = ?', [strtolower($compName)])->value('comp_id');
@@ -460,7 +475,7 @@ class CROController extends Controller
 
     public function AddCompany(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $companyName = $req->companyName;
             $numbers = "";
@@ -503,7 +518,7 @@ class CROController extends Controller
 
     public function AddCompanyLead(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
         $compId = $req->compId;
         $entityId = $req->entityValId;
@@ -570,7 +585,7 @@ class CROController extends Controller
 
     public function CompanyReports()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             //$user_id = DB::table('users')->where('email', session('username'))->value('user_id');
             $companyList = DB::select("SELECT DISTINCT 
@@ -620,7 +635,7 @@ class CROController extends Controller
 
     public function CompanyReportDetails(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityID = $req->entity_id;
             $schoolID = $req->school_id;
@@ -670,7 +685,7 @@ class CROController extends Controller
 
     public function DownloadCompanyDetails(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "CRO")
         {
             $entityID = $req->entity_id;
             $schoolID = $req->school_id;
@@ -747,6 +762,47 @@ class CROController extends Controller
         else
         {
             return view('home.home-view');
+        }
+    }
+
+    public function SaveImage(Request $req)
+    {
+        if(session('username') != "" && session('role') == "CRO")
+        {
+            $uploadedFiles = $request->file('photos');
+            $uploadedFileNames = [];
+
+            foreach ($uploadedFiles as $file) {
+                // Generate a unique name
+                $name = pathinfo($filename, PATHINFO_FILENAME); 
+                $filename = $name . '.webp';
+
+                // Convert the image to WEBP format
+                $image = Image::make($file)->encode('webp', 90);
+
+                // Store the image in the 'public/uploads' directory
+                Storage::put('public/uploads/' . $filename, $image);
+
+                // Add filename to the list
+                $userId = DB::table('users')->join('students', 'users.user_id', '=', 'students.fk_user_id')->where('unique_id', '=', $name)->value('user_id');
+                DB::table('user_image')->insert([
+                    'img_name' => $filename,
+                    'img_path' => 'public/uploads/' . $filename,
+                    'fk_user_id' => $userId,
+                    'created_by' => session('username'),
+                    'updated_by' => session('username'),
+                    'created_date' => now(),
+                    'updated_date' => now(),
+                    'active' => 1
+                ]);
+                $uploadedFileNames[] = $filename;
+            }
+
+            // Return a success response
+            return response()->json([
+                'message' => 'Photos uploaded and converted to WEBP successfully!',
+                'files' => $uploadedFileNames,
+            ]);
         }
     }
 }

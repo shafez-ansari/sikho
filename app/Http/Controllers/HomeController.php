@@ -59,6 +59,7 @@ class HomeController extends Controller
             $otp = $req->otp;
             $userList = DB::select("SELECT * FROM users u
                                     LEFT JOIN students s ON u.user_id = s.fk_user_id
+                                    LEFT JOIN role r on r.role_id = u.fk_role_id
                                     WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
 
             $userId = 0;
@@ -80,6 +81,7 @@ class HomeController extends Controller
                 {
                     $roleId = $user->fk_role_id;
                     session()->put('username', $user->email); 
+                    session()->put('role', $user->role_name);
                 }
 
                 $roleName = DB::table('role')->where('role_id', '=', $roleId)->value('role_name');
@@ -155,7 +157,7 @@ class HomeController extends Controller
 
     public function StudentDetails()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "Student")
         {
             $userList = DB::select("SELECT u.user_id, u.fk_role_id, u.full_name, u.email, u.phone, stu.unique_id, e.entity_name, e.entity_code, s.school_name, s.school_code, c.course_name, c.course_code, stu.batch_code, stu.semester_code, stu.enrollment_date, ui.img_name, ui.img_path 
                                     FROM users u
@@ -177,7 +179,7 @@ class HomeController extends Controller
 
     public function SubmitPlacement($entityName, $school, $yes, $no, $course)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "Student")
         {
             // $entityName = $req->entity;
             // $school = $req->school;
@@ -351,7 +353,7 @@ class HomeController extends Controller
 
     public function SubmitQuestionarie(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "Student")
         {
             $userId = DB::table('users')->where('email', '=', session('username'))->value('user_id');
             
@@ -457,7 +459,7 @@ class HomeController extends Controller
 
     public function GetCity(Request $req)
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "Student")
         {
             $stateId = $req->stateId;
             $cityList = DB::select("SELECT city_id, city_name FROM city WHERE fk_state_id = ?", [$stateId]);
@@ -471,7 +473,7 @@ class HomeController extends Controller
 
     public function ThankYou()
     {
-        if(session('username') != "")
+        if(session('username') != "" && session('role') == "Student")
         {
             $fullName = DB::table('users')->where('email', '=', session('username'))->value('full_name');
             $uniqueId = DB::table('users')->join('students', 'users.user_id', '=', 'students.fk_user_id')->where('email', '=', session('username'))->value('unique_id');

@@ -168,9 +168,8 @@
         </div>
         <div class="container">
             <div class="logos">
-                <img src="{{url('/images/AAfTonline.png')}}" alt="AAFT Online">
-                <img src="{{url('/images/Aaft.png')}}" alt="AAFT Logo">
-                <img src="{{url('/images/University.png')}}" alt="AAFT University Logo">
+                <img src="{{url('/images/aaftt.jpg')}}" alt="AAFT Online">
+
             </div>
 
             <div class="form-container" style="max-width: 500px; margin: auto; border: 1px solid #ccc; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
