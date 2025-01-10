@@ -98,12 +98,12 @@
     <div class="upload-section">
         Upload Image
     </div>
-    
+
     <div class="upload-area">
         <form id="uploadForm" enctype="multipart/form-data">
-            @csrf
+            @csrf            
             <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
-            <p>Upload Bulk Data</p>                    
+            <p>Upload Bulk Images</p>                    
             <input type="file" name="studentFile" id="studentFile" accept=".csv" required>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>

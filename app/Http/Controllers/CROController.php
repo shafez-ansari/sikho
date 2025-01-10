@@ -87,7 +87,7 @@ class CROController extends Controller
         if(session('username') != "" && session('role') == "CRO")
         {
             $entityList = DB::select("SELECT * FROM entity where active = 1");
-            return view('cro.bulk', compact(['entityList']));
+            return view('cro.bulk-image', compact(['entityList']));
         }
         else
         {

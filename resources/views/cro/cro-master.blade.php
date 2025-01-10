@@ -259,6 +259,7 @@
                 <div class="justify-content-between mb-3">
                     <a href="{{ url('cro-details') }}" class="btn btn-danger btn-spacing">Student Reports</a>
                     <a href="{{ url('student-upload') }}" class="btn btn-danger btn-spacing">Student Upload</a>
+                    <a href="{{ url('image-upload') }}" class="btn btn-danger btn-spacing">Student Image Upload</a>
                     <a href="{{ url('view-company') }}" class="btn btn-danger btn-spacing">Recruiter</a>
                     <a href="{{ url('company-report') }}" class="btn btn-danger btn-spacing">Company Reports</a>
                 </div>            
