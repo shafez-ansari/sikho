@@ -7,8 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
-use Illuminate\Support\Facades\Response;
-use Image;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class CROController extends Controller
@@ -84,15 +83,15 @@ class CROController extends Controller
 
     public function BulkImageUpload()
     {
-        if(session('username') != "" && session('role') == "CRO")
-        {
+        // if(session('username') != "" && session('role') == "CRO")
+        // {
             $entityList = DB::select("SELECT * FROM entity where active = 1");
             return view('cro.bulk-image', compact(['entityList']));
-        }
-        else
-        {
-            return view('home.home-view');
-        }
+        // }
+        // else
+        // {
+        //     return view('home.home-view');
+        // }
     }
 
     public function ViewCompany()
@@ -765,44 +764,72 @@ class CROController extends Controller
         }
     }
 
-    public function SaveImage(Request $req)
+    public function SaveImage(Request $request)
     {
-        if(session('username') != "" && session('role') == "CRO")
-        {
-            $uploadedFiles = $request->file('photos');
-            $uploadedFileNames = [];
+        $uploadedPaths = [];
+        
+        if ($request->hasFile('studentFile')) {
+            foreach ($request->file('studentFile') as $image) {
+                $fileName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+                $webpName = $fileName . '.webp';
+                $webpPath = 'uploads/' . $webpName;
 
-            foreach ($uploadedFiles as $file) {
-                // Generate a unique name
-                $name = pathinfo($filename, PATHINFO_FILENAME); 
-                $filename = $name . '.webp';
+                // Convert to WebP using GD Library
+                $imageResource = null;
+                $mime = $image->getMimeType();
 
-                // Convert the image to WEBP format
-                $image = Image::make($file)->encode('webp', 90);
+                switch ($mime) {
+                    case 'image/jpeg':
+                        $imageResource = imagecreatefromjpeg($image->getRealPath());
+                        break;
+                    case 'image/jpg':
+                        $imageResource = imagecreatefromjpg($image->getRealPath());
+                        break;
+                }
 
-                // Store the image in the 'public/uploads' directory
-                Storage::put('public/uploads/' . $filename, $image);
+                if ($imageResource) {
+                    ob_start();
+                    imagewebp($imageResource, null, 90); // 90 is quality
+                    $webpContent = ob_get_contents();
+                    ob_end_clean();
 
-                // Add filename to the list
+                    imagedestroy($imageResource);
+
+                    Storage::put($webpPath, $webpContent);
+                    $uploadedPaths[] = $webpPath;
+                }
+                
                 $userId = DB::table('users')->join('students', 'users.user_id', '=', 'students.fk_user_id')->where('unique_id', '=', $name)->value('user_id');
-                DB::table('user_image')->insert([
-                    'img_name' => $filename,
-                    'img_path' => 'public/uploads/' . $filename,
-                    'fk_user_id' => $userId,
-                    'created_by' => session('username'),
-                    'updated_by' => session('username'),
-                    'created_date' => now(),
-                    'updated_date' => now(),
-                    'active' => 1
-                ]);
-                $uploadedFileNames[] = $filename;
+                if ($userId) 
+                {
+                    DB::table('user_image')->insert([
+                        'img_name' => $filename,
+                        'img_path' => 'uploads/' . $filename,
+                        'fk_user_id' => $userId,
+                        'created_by' => session('username'),
+                        'updated_by' => session('username'),
+                        'created_date' => now(),
+                        'updated_date' => now(),
+                        'active' => 1
+                    ]);
+                }
+                else 
+                {
+                    return response()->json([
+                        'message' => "No user found with unique_id."
+                    ]);
+                }
             }
-
-            // Return a success response
             return response()->json([
-                'message' => 'Photos uploaded and converted to WEBP successfully!',
-                'files' => $uploadedFileNames,
+                'message' => 'Photos uploaded successfully!'
             ]);
         }
+        else 
+        {
+            return response()->json([
+                'message' => 'No file uploaded.'
+            ], 400);
+        }
     }
+
 }

@@ -57,7 +57,7 @@ Route::get('thankYou', [HomeController::class, 'ThankYou']);
 
 Route::get('student-upload', [CROController::class, 'BulkUpload']);
 Route::get('image-upload', [CROController::class, 'BulkImageUpload']);
-Route::get('save-image', [CROController::class, 'SaveImage']);
+Route::POST('save-image', [CROController::class, 'SaveImage']);
 
 Route::get('get-school', [CROController::class, 'GetSchool']);
 Route::get('get-course', [CROController::class, 'GetCourse']);

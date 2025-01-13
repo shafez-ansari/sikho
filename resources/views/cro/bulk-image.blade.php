@@ -104,7 +104,8 @@
             @csrf            
             <img src="{{url('/images/bul.png')}}" alt="Upload Icon">
             <p>Upload Bulk Images</p>                    
-            <input type="file" name="studentFile" id="studentFile" accept=".csv" required>
+            <input type="file" name="studentFile[]" id="studentFile" accept=".jpg, .jpeg" multiple>
+            <span class="text-danger" id="studentValidationId"></span>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
     </div>
@@ -114,24 +115,32 @@
     $('#uploadForm').on('submit', function(e) {
     e.preventDefault();
 
-    var file = document.getElementById('studentFile').files[0];
-    if (!file) {
-        $('#studentValidationId').html('Please select a file to upload.');
-        return;
-    }
+    let files = document.getElementById('studentFile').files;
+        if (files.length === 0) {
+            $('#studentValidationId').html('Please select at least one file to upload.');
+            return;
+        }
+        debugger;
+        let validExtensions = ['jpg', 'jpeg'];
+        let formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
 
-    var fileExt = file.name.split('.').pop().toLowerCase();
-    if (fileExt != 'csv') {
-        $('#studentValidationId').html('Please upload a valid CSV file.');
-        return;
-    }
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            let fileExt = file.name.split('.').pop().toLowerCase();
 
-    var formData = new FormData();
-    formData.append('studentFile', file);
-    formData.append('_token', '{{ csrf_token() }}');
+            if (!validExtensions.includes(fileExt)) {
+                $('#studentValidationId').html('Please upload images with .jpg or .jpeg extension only.');
+                return;
+            }
 
+            formData.append('studentFile[]', file);
+        }
+
+        // Clear the error message
+        $('#studentValidationId').html('');
     $.ajax({
-        url: "/upload.student.data",
+        url: "/save-image",
         method: "POST",
         type: "POST",
         data: formData,
