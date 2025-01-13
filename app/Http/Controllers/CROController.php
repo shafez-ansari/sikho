@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
-use Intervention\Image\Facades\Image;
+//use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
 class CROController extends Controller
@@ -767,44 +767,36 @@ class CROController extends Controller
     public function SaveImage(Request $request)
     {
         $uploadedPaths = [];
-        
+        $folderPath = 'public/uploads/';
+
+        // Check if the directory exists, if not, create it
+        if (!Storage::exists($folderPath)) {
+            Storage::makeDirectory($folderPath);
+        }
+
+        // Check if files are uploaded
         if ($request->hasFile('studentFile')) {
             foreach ($request->file('studentFile') as $image) {
-                $fileName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-                $webpName = $fileName . '.webp';
-                $webpPath = 'uploads/' . $webpName;
+                // Generate a unique filename
+                $filename = $image->getClientOriginalName();
 
-                // Convert to WebP using GD Library
-                $imageResource = null;
-                $mime = $image->getMimeType();
+                // Store the image
+                $image->storeAs($folderPath, $filename);
 
-                switch ($mime) {
-                    case 'image/jpeg':
-                        $imageResource = imagecreatefromjpeg($image->getRealPath());
-                        break;
-                    case 'image/jpg':
-                        $imageResource = imagecreatefromjpg($image->getRealPath());
-                        break;
-                }
+                // Extract the unique ID from the filename (if it exists)
+                $name = pathinfo($filename, PATHINFO_FILENAME);
 
-                if ($imageResource) {
-                    ob_start();
-                    imagewebp($imageResource, null, 90); // 90 is quality
-                    $webpContent = ob_get_contents();
-                    ob_end_clean();
+                // Find the user by unique_id
+                $userId = DB::table('users')
+                    ->join('students', 'users.user_id', '=', 'students.fk_user_id')
+                    ->where('unique_id', '=', $name)
+                    ->value('user_id');
 
-                    imagedestroy($imageResource);
-
-                    Storage::put($webpPath, $webpContent);
-                    $uploadedPaths[] = $webpPath;
-                }
-                
-                $userId = DB::table('users')->join('students', 'users.user_id', '=', 'students.fk_user_id')->where('unique_id', '=', $name)->value('user_id');
-                if ($userId) 
-                {
+                if ($userId) {
+                    // Insert image details into the database
                     DB::table('user_image')->insert([
                         'img_name' => $filename,
-                        'img_path' => 'uploads/' . $filename,
+                        'img_path' => $folderPath . $filename,
                         'fk_user_id' => $userId,
                         'created_by' => session('username'),
                         'updated_by' => session('username'),
@@ -812,20 +804,22 @@ class CROController extends Controller
                         'updated_date' => now(),
                         'active' => 1
                     ]);
-                }
-                else 
-                {
+
+                    // Add the uploaded path to the response
+                    $uploadedPaths[] = $folderPath . $filename;
+                } else {
                     return response()->json([
-                        'message' => "No user found with unique_id."
+                        'message' => "No user found with unique_id"
                     ]);
                 }
             }
+
+            // Return success response with uploaded paths
             return response()->json([
                 'message' => 'Photos uploaded successfully!'
             ]);
-        }
-        else 
-        {
+        } else {
+            // No files uploaded
             return response()->json([
                 'message' => 'No file uploaded.'
             ], 400);
