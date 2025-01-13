@@ -534,6 +534,8 @@ class CROController extends Controller
         $leadStage = $req->leadStageValId;
         $industryEngagementValId = $req->industryEngagementValId;
         $numbers = "";
+        $month = "";
+        $year = "";
         $spocId = DB::table('users')->where('email', session('username'))->value('user_id');
         $lastCompId = DB::table('company_lead_details')->orderBy('hr_unqiue_id', 'desc')->value('hr_unqiue_id');
 
@@ -566,6 +568,8 @@ class CROController extends Controller
                 'industry_engagement' => $industryEngagementValId,
                 'fk_spoc_id' => $spocId,
                 'hr_unqiue_id' => $uniqueId,
+                'month' => $month,
+                'year' => $year,
                 'created_by' => session('username'),
                 'updated_by' => session('username'),
                 'created_date' => now(),
@@ -781,8 +785,9 @@ class CROController extends Controller
                 $filename = $image->getClientOriginalName();
 
                 // Store the image
-                $image->storeAs($folderPath, $filename);
-
+                $imagePath = $image->storeAs($folderPath, $filename);
+                // Add the uploaded path to the response
+                $uploadedPaths[] = str_replace('public/', 'storage/', $imagePath);
                 // Extract the unique ID from the filename (if it exists)
                 $name = pathinfo($filename, PATHINFO_FILENAME);
 
@@ -796,7 +801,7 @@ class CROController extends Controller
                     // Insert image details into the database
                     DB::table('user_image')->insert([
                         'img_name' => $filename,
-                        'img_path' => $folderPath . $filename,
+                        'img_path' => str_replace('public/', 'storage', $imagePath),
                         'fk_user_id' => $userId,
                         'created_by' => session('username'),
                         'updated_by' => session('username'),

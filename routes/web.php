@@ -16,7 +16,7 @@ use App\Http\Controllers\CROController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home/home-view');
 });
 
 Route::get('/home', function () {

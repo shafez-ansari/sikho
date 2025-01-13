@@ -263,7 +263,7 @@
             <!-- Student Image -->
             @foreach($userList as $user)
                 @if($user->img_name != null)
-                    <img id="studentImage" class="student-image" src="{{ asset('storage/'.$user->img_name) }}" alt="Student Avatar">
+                    <img id="studentImage" class="student-image" src="{{ asset($user->img_path) }}" alt="Student Avatar">
                 @else
                     <img id="studentImage" class="student-image" src="{{url('/images/user.jpg')}}" alt="Student Avatar">
                 @endif
@@ -294,8 +294,8 @@
                     <tr>
                         <td style="font-weight: bold; padding: 8px;">Unique ID:</td>
                         <td style="padding: 8px;">{{ $user->unique_id }}</td>
-                        <td style="font-weight: bold; padding: 8px;">Program Code:</td>
-                        <td style="padding: 8px;">{{ $user->course_code }}</td>
+                        <td style="font-weight: bold; padding: 8px;">Program Name:</td>
+                        <td style="padding: 8px;">{{ $user->course_name }}</td>
                     </tr>
                     <tr>
                         <td style="font-weight: bold; padding: 8px;">Name:</td>
