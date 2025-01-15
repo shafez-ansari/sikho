@@ -34,6 +34,7 @@
     }
 
     .form-control {
+        height: auto;
         width: 100%;
         padding: 10px;
         border: 1px solid #ccc;
@@ -67,6 +68,9 @@
     .btn-primary:hover {
         background:rgb(196, 18, 18);
     }
+    .btn {
+        height: 40px;
+    }
 
     @media (max-width: 768px) {
         .form-container {
@@ -77,6 +81,7 @@
             width: 100%;
         }
     }
+    
 </style>
 
 <form action="" id="entityFormId">
@@ -134,7 +139,7 @@
                 </div>
 
                 <div class="form-section">
-                    <label for="workExp">Relevant Work Experience</label>
+                    <label for="workExp">Relevant Work Experience (In Years)</label>
                     <input type="number" name="workExp" id="workExp" class="form-control">
                     <span class="text-danger" id="workExpError"></span>
                 </div>
