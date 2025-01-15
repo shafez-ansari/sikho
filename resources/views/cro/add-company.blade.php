@@ -13,7 +13,7 @@
             border-radius: 5px;
         }
         nav button {
-            background-color: #e74c3c;
+            background-color: #dc3545;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -22,7 +22,7 @@
             font-size: 16px;
         }
         nav button:hover {
-            background-color: #c0392b;
+            background-color: #dc3545;
         }
         .main-content {
             margin-top: 20px;
@@ -85,7 +85,7 @@
             display: inline-block;
             margin-top: 10px;
             text-decoration: none;
-            color: #f10000;
+            color: #dc3545;
             font-weight: bold;
         }
         .add-record:hover {

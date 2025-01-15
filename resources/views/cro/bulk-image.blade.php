@@ -19,7 +19,7 @@
 
         .action-buttons button {
             width: auto;
-            background-color: #f8d7da;
+            background-color: #dc3545;
             color: #dc3545;
             border: 1px solid #dc3545;
             padding: 10px 20px;

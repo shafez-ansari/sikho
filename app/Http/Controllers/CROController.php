@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 //use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
+// use Illuminate\Support\Facades\Storage;
 
 class CROController extends Controller
 {
