@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class CROController extends Controller
 {
+    public function __construct()
+    {
+        $this->client = new Client();
+        $this->apiKey = env('LEADSQUARED_API_KEY');
+        $this->apiSecret = env('LEADSQUARED_API_SECRET');
+    }
+
     public function CRODetails()
     {
         if(session('username') != "" && session('role') == "CRO")
@@ -507,6 +514,56 @@ class CROController extends Controller
                 'active' => 1
             ]);
 
+            $leadData = [
+                "CompanyType" => [
+                    "CompanyTypeName" => "Industry Alliances"
+                ],
+                "CompanyProperties" => [
+                    [
+                        "Attribute" => "CompanyName",
+                        "Value" => $companyName
+                    ],
+                    [
+                        "Attribute" => "CompanyNumber",
+                        "Value" => $uniqueId
+                    ],
+                    [
+                        "Attribute" => "Website",
+                        "Value" => $req->companyWebsite
+                    ],
+                    [
+                        "Attribute" => "OwnerId",
+                        "Value" => "itservices+4@aaft.com"
+                    ],
+                    [
+                        "Attribute" => "Custom_12",
+                        "Value" => $req->companyCategory
+                    ],
+                    [
+                        "Attribute" => "Custom_11",
+                        "Value" => $req->companyMonth
+                    ],
+                    [
+                        "Attribute" => "Custom_10",
+                        "Value" => $req->companyYear    
+                    ],
+                    [
+                        "Attribute" => "Stage",
+                        "Value" => "Active"    
+                    ]
+                ]
+                // ... other lead-specific fields
+            ];
+
+            $response = $this->client->post('https://api.leadsquared.com/v2/CompanyManagement.svc/Company.Create', [
+                'json' => [
+                    'accessKey' => $this->apiKey,
+                    'secretKey' => $this->apiSecret,
+
+                    'Lead' => $leadData,
+                ],
+            ]);
+
             return response()->json(['mesg' => $compId]);
         }
         else
@@ -575,6 +632,21 @@ class CROController extends Controller
                 'created_date' => now(),
                 'updated_date' => now(),
                 'active' => 1
+            ]);
+
+            // Prepare lead data
+            $leadData = [
+                'FirstName' => $request->input('firstName'),
+                'LastName' => $request->input('lastName'),
+                'Email' => $request->input('email'),
+                // Add other fields as necessary
+            ];
+
+            $response = $this->client->post('https://api.leadsquared.com/v2/LeadManagement.svc/Lead.Add', [
+                'json' => [
+                    'ApiKey' => $this->apiKey,
+                    'Lead' => $leadData,
+                ],
             ]);
 
             $companyName = DB::table('company_details')->where('comp_id', $compId)->value('comp_name');
