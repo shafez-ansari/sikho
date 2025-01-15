@@ -227,9 +227,14 @@
                 url: "/verify-email",
                 data: { 'email': email },
                 success: function (data) {
-                    if (data['loginMsg'] == "Invalid email or unique ID") {
+                    debugger;
+                    if (data.loginMsg == "Invalid email or unique Id") {
                         $("#emailError").empty().html(data['loginMsg']);
-                    } else {
+                    }
+                    else if(data.loginMsg == "Invalid OTP"){
+                        $("#emailError").empty().html(data['loginMsg']);
+                    }
+                    else {
                         $("#emailError").empty().html('');
                         $("#loginOtp").show();
                         $("#otpError").show();
@@ -250,8 +255,9 @@
             url: "/resend-otp",
             data: { 'email': email },
             success: function (data) {
-                if (data['loginMsg'] == "OTP re-generated") {
-                    console.log(data);
+                debugger;
+                if (data['loginMsg'] == "OTP resend generated") {
+                    alert("OTP re-generated successfully");
                 }
             }
         });

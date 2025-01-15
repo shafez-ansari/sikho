@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+        // Other service configurations...
+    
+    'account_management' => [
+        'api_url' => env('LEADSQUARED_API_KEY'),
+        'api_token' => env('LEADSQUARED_API_SECRET'),
+    ],
+    
+
 ];

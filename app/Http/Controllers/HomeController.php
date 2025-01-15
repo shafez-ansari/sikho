@@ -60,15 +60,22 @@ class HomeController extends Controller
             $userList = DB::select("SELECT * FROM users u
                                     LEFT JOIN students s ON u.user_id = s.fk_user_id
                                     LEFT JOIN role r on r.role_id = u.fk_role_id
-                                    WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
+                                    WHERE LOWER(u.email) = ? OR LOWER(s.unique_id) = ? AND u.active = 1", [strtolower($email), strtolower($email)]);
 
             $userId = 0;
-            foreach($userList as $user)
+            if(count($userList) == 0)
             {
-                $userId = $user->user_id;
+                return response()->json(['loginMsg' => 'Invalid email or unique Id']);
+            }
+            else
+            {
+                foreach($userList as $user)
+                {
+                    $userId = $user->user_id;
+                }
             }
 
-            $otpList = DB::select("SELECT * FROM email_otp WHERE fk_user_id = ? AND otp = ? AND created_date >= NOW() - INTERVAL 10 MINUTE", [$userId, $otp]);
+            $otpList = DB::select("SELECT * FROM email_otp WHERE active = 1 AND fk_user_id = ? AND otp = ? AND created_date >= NOW() - INTERVAL 10 MINUTE", [$userId, $otp]);
 
             if(count($otpList) == 0)
             {            
@@ -124,6 +131,7 @@ class HomeController extends Controller
             $userList = DB::select("SELECT * FROM users u
                                     LEFT JOIN students s ON u.user_id = s.fk_user_id
                                     WHERE u.email = ? OR s.unique_id = ?", [$email, $email]);
+                                    
             $userId = 0;
             foreach($userList as $user)
             {
