@@ -339,8 +339,8 @@ class HomeController extends Controller
             }
             else 
             {
-                $interval = $req->interval;
-                $notPlacement = $req->notPlacement;
+                $intervalId = $req->intervalId;
+                $notPlacementId = $req->notPlacementId;
                 $questionarieId = DB::table('questionarie_no')->where('fk_user_id', '=', $userId)->value('questionarie_no_id');
                 if($questionarieId == 0)
                 {

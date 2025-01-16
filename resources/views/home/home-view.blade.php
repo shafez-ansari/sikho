@@ -219,6 +219,7 @@
 <script type="text/javascript">
     function verifyOtp() {
         var email = $('#loginEmail').val();
+        $("#verifyBtn").hide();
         if (email == "") {
             $("#emailError").empty().html("Please enter email or unique ID");
         } else {
@@ -230,6 +231,7 @@
                     debugger;
                     if (data.loginMsg == "Invalid email or unique Id") {
                         $("#emailError").empty().html(data['loginMsg']);
+                        $("#verifyBtn").show();
                     }
                     else if(data.loginMsg == "Invalid OTP"){
                         $("#emailError").empty().html(data['loginMsg']);

@@ -356,8 +356,8 @@
         <p id="deleteMesgId">Are you sure you want to continue?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-primary" title="Yes" onclick="submitPlacement();">Yes</button>
-        <button data-bs-dismiss="modal" class="btn btn-sm btn-danger" title="No">No</button>
+        <button type="button" class="btn btn-primary" style="width:10%; background-color:green" title="Yes" onclick="submitPlacement();">Yes</button>
+        <button data-bs-dismiss="modal" style="width:10%; background-color:#ff0000"  class="btn btn-danger" title="No">No</button>
         </div>
     </div>    
   </div>

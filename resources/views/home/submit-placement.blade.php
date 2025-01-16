@@ -502,7 +502,7 @@
                 $("#notPlacementError").text("");
             }
 
-            if(notPlacementId == 1) {
+            if(notPlacementId == 6) {
                 if(intervalId == "") {
                     $("#intervalError").text("Please enter duration");
                     
@@ -510,7 +510,7 @@
                     $("#intervalError").text("");
                 }
             }
-
+            debugger;
             if($("#notPlacementError").text() == "" && $("#intervalError").text() == "") {
                 // Submit form
                 $.ajax({
