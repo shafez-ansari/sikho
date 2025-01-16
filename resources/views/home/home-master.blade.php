@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AAFT Connect</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
         <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">  
@@ -42,7 +43,7 @@
             .logout-button .btn {
                 padding: 10px 15px;
                 font-size: 14px;
-                background-color: #d10505;
+                background-color: #ff0000;
                 border: none;
                 color: #fff;
                 border-radius: 5px;
@@ -107,7 +108,7 @@
                 width: 100%;
             }
             button:hover {
-                background-color: #ed0a15;
+                background-color: #ff0000;
             }
             .verify-btn {
                 display: block;
@@ -139,7 +140,7 @@
             }
             .btn-primary {
                 color: #fff;
-                background-color: #d10505;
+                background-color: #ff0000;
                 border-color: #ff0000;
             }
             /* Responsive Design */

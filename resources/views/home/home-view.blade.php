@@ -89,11 +89,11 @@
                 width: 100%;
             }
             button:hover {
-                background-color: #ed0a15;
+                background-color: #ff0000;
             }
             .verify-btn {
                 display: block;
-                background-color: #d76060;
+                background-color: #ff0000;
                 color: #fff;
                 padding: 10px 20px;
                 text-align: center;
@@ -121,7 +121,7 @@
             }
             .btn-primary {
     color: #fff;
-    background-color: #d10505;
+    background-color: #ff0000;
     border-color: #ff0000;
 }
             /* Responsive Design */

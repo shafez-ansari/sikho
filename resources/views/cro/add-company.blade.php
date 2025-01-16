@@ -13,7 +13,7 @@
             border-radius: 5px;
         }
         nav button {
-            background-color: #dc3545;
+            background-color: #ff0000;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -22,7 +22,7 @@
             font-size: 16px;
         }
         nav button:hover {
-            background-color: #dc3545;
+            background-color: #ff0000;
         }
         .main-content {
             margin-top: 20px;
@@ -56,7 +56,7 @@
         }
         .form-section button {
             margin-top: 10px;
-            background-color: #3498db;
+            background-color: #ff0000;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -65,7 +65,7 @@
             margin-left: 0px;
         }
         .form-section button:hover {
-            background-color: #2980b9;
+            background-color: #ff0000;
         }
         table {
             flex: 2;
@@ -85,7 +85,7 @@
             display: inline-block;
             margin-top: 10px;
             text-decoration: none;
-            color: #dc3545;
+            color: #ff0000;
             font-weight: bold;
         }
         .add-record:hover {

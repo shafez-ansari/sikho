@@ -55,7 +55,7 @@
             position: sticky;
             top: 0;
             z-index: 1020;
-            background-color: #343a40; /* Matches table-dark */
+            background-color: #000000; /* Matches table-dark */
             color: white;
         }
         

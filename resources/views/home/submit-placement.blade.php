@@ -34,6 +34,7 @@
     }
 
     .form-control {
+        text-align: center;
         height: auto;
         width: 100%;
         padding: 10px;
@@ -56,7 +57,7 @@
     }
 
     .btn-primary {
-        background:rgb(221, 28, 28);
+        background: #ff0000;
         color: white;
         padding: 10px 20px;
         border: none;
@@ -66,7 +67,7 @@
     }
 
     .btn-primary:hover {
-        background:rgb(196, 18, 18);
+        background: #ff0000;
     }
     .btn {
         height: 40px;

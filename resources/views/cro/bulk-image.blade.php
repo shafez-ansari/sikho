@@ -19,9 +19,9 @@
 
         .action-buttons button {
             width: auto;
-            background-color: #dc3545;
-            color: #dc3545;
-            border: 1px solid #dc3545;
+            background-color: #ff0000;
+            color: #ff0000;
+            border: 1px solid #ff0000;
             padding: 10px 20px;
             font-size: 14px;
             border-radius: 5px;
@@ -30,7 +30,7 @@
         }
 
         .action-buttons button:hover {
-            background-color: #dc3545;
+            background-color: #ff0000;
             color: white;
         }
 

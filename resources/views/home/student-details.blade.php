@@ -32,7 +32,7 @@
 }
 
 .custom-checkbox input[type="checkbox"]:checked + span {
-    background-color: #ff0a0a;
+    background-color: #ff0000;
     color: #fff;
     padding: 5px 15px;
     border-radius: 5px;
@@ -82,7 +82,7 @@
     background-color: #fff;
     border-radius: 50%;
     padding: 6px;
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
 }
 
 /* Placement Section */
@@ -106,15 +106,14 @@
 }
 
 .placement-section .checkbox-container {
-    text-align: Left;
     margin-top: 20px;
-    display: inline-flex;
+    display: flex;
     justify-content: center;
     gap: 20px;
 }
 
 .placement-section .submit-btn {
-    background-color: #f80901;
+    background-color: #ff0000;
     border: none;
     color: white;
     padding: 10px 40px;
@@ -337,25 +336,49 @@
             <span>No</span>
         </label>
     </div>
-    <div style="text-align: center; width:750; margin-top: 20px;">
+    <!-- <div style="text-align: center; width:750; margin-top: 20px;">
         <span id="yesornoerror" class="error-msg"></span>
         <button type="button" onclick="submitPlacement()" class="submit-btn">Submit</button>
-    </div>
+    </div> -->
+</div>
+
+<!-- Delete Agency Modal -->
+<div class="modal" id="submitPlacementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="deleteTitleId"><b>Confirmation</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="yesId" name="yesId" /> 
+        <input type="hidden" id="noId" name="noId" />       
+        <p id="deleteMesgId">Are you sure you want to continue?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" title="Yes" onclick="submitPlacement();">Yes</button>
+        <button data-bs-dismiss="modal" class="btn btn-sm btn-danger" title="No">No</button>
+        </div>
+    </div>    
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
 <script type="text/javascript">
     function toggleCheckbox(selected) {
+        debugger;
         if (selected === 'yes') {
             document.getElementById('no').checked = false;
         } else if (selected === 'no') {
             document.getElementById('yes').checked = false;
         }
-        document.getElementById('yesornoerror').textContent = ''; // Clear error
+
+        $("#submitPlacementModal").modal('show');
     }
 
     function submitPlacement() {
+        debugger;
         const yesChecked = document.getElementById('yes').checked;
         const noChecked = document.getElementById('no').checked;
         const errorElement = document.getElementById('yesornoerror');
@@ -375,16 +398,12 @@
         else {
             no = 0;
         }
-        errorElement.textContent = '';
+        //errorElement.textContent = '';
 
-        if (yesChecked && noChecked) {
-            errorElement.textContent = "Please select only one option.";
-        } else if (!yesChecked && !noChecked) {
-            errorElement.textContent = "Please select either Yes or No.";
-        } else {
+        
             let url = `/store-placement/${entity}/${school}/${yes}/${no}/${course}`;
             window.location.href = url;
-        }
+        
     }
 </script>
 
