@@ -76,7 +76,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-select" id="school" name="school" aria-label="Select School" onchange="getCourseList()">
+                        <select class="form-select" id="school" name="school" aria-label="Select School" onclick="checkSchool()" onchange="getCourseList()">
                             <option selected value="">Select School</option>
                         </select>
                     </div>
@@ -179,6 +179,10 @@
 
     function getCourseList() {
         var school_id = $('#school').val();
+        if(school_id == "") {
+            $.notify("Please select an Entity", "warning");
+            return;
+        }
         $.ajax({
             url: "/get-course",
             type: "GET",
@@ -194,6 +198,14 @@
                 }
             }
         });
+    }
+
+    function checkSchool() {
+        var entity_id = $('#entity').val();
+        if(entity_id == "") {
+            $.notify("Please select an Entity", "warning");
+            return;
+        }
     }
 
     function submitValues() {

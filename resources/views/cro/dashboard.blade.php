@@ -82,12 +82,13 @@
                     <div class="col-md-2">
                         <select class="form-select" id="school" name="school" aria-label="Select School" onchange="getCourseList()">
                             <option selected value="">Select School</option>
+                            <option value=""> Select Entity First </option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" id="course" name="course" aria-label="Select Course">
                             <option selected value="">Select Course</option>
-                            
+                            <option value=""> Select School First </option>
                         </select>
                     </div>
                     
@@ -165,18 +166,28 @@
             success: function(data) {
                 var schoolId = $("#school").empty();
                 schoolId.append('<option selected="selected" value="">Select School</option>');
-                if(data) {        
+                debugger;
+                if(data.schoolList.length != 0) {        
                     for(var i = 0; i < data.schoolList.length;i++){
                         var school_item_el = '<option value="' + data.schoolList[i]['school_id']+'">'+ data.schoolList[i]['school_name']+'</option>';
                         schoolId.append(school_item_el);
                     }
+                }
+                else 
+                {
+                    schoolId.append('<option value="">Select Entity First</option>');
+                    var course = $("#course").empty();
+                    course.append('<option value="">Select Course</option>');
+                    course.append('<option value="">Select School First</option>');
                 }
             }
         });
     }
 
     function getCourseList() {
+        
         var school_id = $('#school').val();
+        
         $.ajax({
             url: "/get-course",
             type: "GET",
@@ -184,14 +195,33 @@
             success: function(data) {
                 var courseId = $("#course").empty();
                 courseId.append('<option selected="selected" value="">Select Course</option>');
-                if(data) {        
+                if(data.courseList.length != 0) {        
                     for(var i = 0; i < data.courseList.length;i++){
                         var course_item_el = '<option value="' + data.courseList[i]['course_id']+'">'+ data.courseList[i]['course_name']+'</option>';
                         courseId.append(course_item_el);
                     }
                 }
+                else {
+                    courseId.append('<option value="">Select School First</option>');
+                }
             }
         });
+    }
+
+    function checkSchool() {
+        var entity_id = $('#entity').val();
+        if(entity_id == "") {
+            $.notify("Please select an Entity", "warning");
+            return;
+        }
+    }
+
+    function checkCourse() {
+        var school_id = $('#school').val();
+        if(school_id == "") {
+            $.notify("Please select a School", "error");
+            return;
+        }
     }
 
     function submitValues() {

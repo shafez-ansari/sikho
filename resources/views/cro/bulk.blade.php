@@ -107,7 +107,8 @@
            
         <form id="uploadForm" enctype="multipart/form-data">
             @csrf
-            <input type="file" name="studentFile" id="studentFile" accept=".csv" required>
+            <input type="file" name="studentFile" id="studentFile" accept=".csv">
+            <span id="studentValidationId" class="text-danger"></span>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>
     </div>
@@ -122,6 +123,7 @@
         $('#studentValidationId').html('Please select a file to upload.');
         return;
     }
+    debugger;
 
     var fileExt = file.name.split('.').pop().toLowerCase();
     if (fileExt != 'csv') {

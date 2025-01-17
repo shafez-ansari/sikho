@@ -7,19 +7,24 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
-//use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
-// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class CROController extends Controller
 {
+    protected $client;
+    protected $baseUrl;
+    protected $accessKey;
+    protected $secretKey;
+
     public function __construct()
     {
-        $this->client = new Client();
-        $this->apiKey = env('LEADSQUARED_API_KEY');
-        $this->apiSecret = env('LEADSQUARED_API_SECRET');
+        $this->baseUrl = env('CRM_API_BASE_URL');
+        $this->accessKey = env('CRM_API_ACCESS_KEY');
+        $this->secretKey = env('CRM_API_SECRET_KEY');
+        $this->client = new Client(['base_uri' => $this->baseUrl]);
     }
 
     public function CRODetails()
@@ -502,7 +507,7 @@ class CROController extends Controller
 
             $uniqueId = "AAFT" . $numbers; // Concatenate prefix with number
 
-            // Insert new company record into company_details table
+            //Insert new company record into company_details table
             $compId = DB::table('company_details')->insertGetId([
                 'comp_unique_id' => $uniqueId,
                 'comp_name' => $companyName,
@@ -517,7 +522,7 @@ class CROController extends Controller
                 'active' => 1
             ]);
 
-            $leadData = [
+            $leadData = $leadData = [
                 "CompanyType" => [
                     "CompanyTypeName" => "Industry Alliances"
                 ],
@@ -533,10 +538,6 @@ class CROController extends Controller
                     [
                         "Attribute" => "Website",
                         "Value" => $req->companyWebsite
-                    ],
-                    [
-                        "Attribute" => "OwnerId",
-                        "Value" => "itservices+4@aaft.com"
                     ],
                     [
                         "Attribute" => "Custom_12",
@@ -555,19 +556,20 @@ class CROController extends Controller
                         "Value" => "Active"    
                     ]
                 ]
-                // ... other lead-specific fields
             ];
 
-            $response = $this->client->post('https://api.leadsquared.com/v2/CompanyManagement.svc/Company.Create', [
-                'json' => [
-                    'accessKey' => $this->apiKey,
-                    'secretKey' => $this->apiSecret,
-
-                    'Lead' => $leadData,
+            $response = $this->client->post('CompanyManagement.svc/Company.Create', [
+                'query' => [
+                    'accessKey' => $this->accessKey,
+                    'secretKey' => $this->secretKey,
                 ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $leadData,
             ]);
 
-            return response()->json(['mesg' => $compId]);
+            return response()->json(['mesg' => json_decode($response->getBody(), true)]);
         }
         else
         {
@@ -639,9 +641,26 @@ class CROController extends Controller
 
             // Prepare lead data
             $leadData = [
-                'FirstName' => $request->input('firstName'),
-                'LastName' => $request->input('lastName'),
+                "CompanyTypeName" => "Industry Alliances",
+                'Account' => 'Company Name',
+                'HRUniqueID' => $uniqueId,
+                'CompanyName' => $req->companyName,
+                'Entity' => $req->entityVal,
+                'School' => $req->schoolVal,
+                'program' => $req->programVal,
+                'course' => $req->courseVal,
+                'Owner' => session('username'),
+                'Industry Sector' => $req->industrySectorVal,
+                'City' => $req->industryLocationVal,
+                'Resource Person' => $request->input('firstName'),
+                'Designation' => $request->input('lastName'),
                 'Email' => $request->input('email'),
+                'Phone' => $request->input('phone'),
+                'Lead Source' => $request->input('leadSource'),
+                'Lead Stage' => $request->input('leadStage'),
+                'Industry Engagement' => $request->input('industryEngagement'),
+                'Month' => $request->input('month'),
+                'Year' => $request->input('year'),
                 // Add other fields as necessary
             ];
 
