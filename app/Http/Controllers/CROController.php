@@ -601,17 +601,17 @@ class CROController extends Controller
         $spocId = DB::table('users')->where('email', session('username'))->value('user_id');
         $lastCompId = DB::table('company_lead_details')->orderBy('hr_unqiue_id', 'desc')->value('hr_unqiue_id');
 
-            if (!empty($lastCompId)) {
-                // Extract numeric part from the lastCompId
-                if (preg_match_all('/\d+/', $lastCompId, $matches)) {
-                    $numbers = (int)$matches[0][0]; // Convert the numeric part to integer
-                    $numbers += 1; // Increment the number
-                }
-            } else {
-                $numbers = 1001; // Default starting ID
+        if (!empty($lastCompId)) {
+            // Extract numeric part from the lastCompId
+            if (preg_match_all('/\d+/', $lastCompId, $matches)) {
+                $numbers = (int)$matches[0][0]; // Convert the numeric part to integer
+                $numbers += 1; // Increment the number
             }
+        } else {
+            $numbers = 1001; // Default starting ID
+        }
 
-            $uniqueId = "HR" . $numbers; // Concatenate prefix with number
+        $uniqueId = "HR" . $numbers; // Concatenate prefix with number
         
         DB::table("company_lead_details")->insert([
                 'fk_comp_id' => $compId,
@@ -639,39 +639,54 @@ class CROController extends Controller
                 'active' => 1
             ]);
 
+            $companyName = DB::table('company_details')->where('comp_id', $compId)->value('comp_name');
+            $entityName = DB::table('entity')->where('entity_id', $entityId)->value('entity_name');
+            $schoolName = DB::table('school')->where('school_id', $schoolId)->value('school_name');
+            $courseName = DB::table('courses')->where('course_id', $courseId)->value('course_name');
+            $program = DB::table('program')->where('program_id', $programTypeId)->value('program_name');
+            $industrySector = DB::table('industry_sector')->where('industry_sector_id', $industrySector)->value('sector_name');
+            
             // Prepare lead data
             $leadData = [
                 "CompanyTypeName" => "Industry Alliances",
-                'Account' => 'Company Name',
-                'HRUniqueID' => $uniqueId,
-                'CompanyName' => $req->companyName,
-                'Entity' => $req->entityVal,
-                'School' => $req->schoolVal,
-                'program' => $req->programVal,
-                'course' => $req->courseVal,
-                'Owner' => session('username'),
-                'Industry Sector' => $req->industrySectorVal,
-                'City' => $req->industryLocationVal,
-                'Resource Person' => $request->input('firstName'),
-                'Designation' => $request->input('lastName'),
-                'Email' => $request->input('email'),
-                'Phone' => $request->input('phone'),
-                'Lead Source' => $request->input('leadSource'),
-                'Lead Stage' => $request->input('leadStage'),
-                'Industry Engagement' => $request->input('industryEngagement'),
-                'Month' => $request->input('month'),
-                'Year' => $request->input('year'),
+                'Account' => $companyName,
+                'mx_Industry_Unique_ID' => $uniqueId,
+                'mx_AAFT_Entity' => $entityName,
+                'mx_AAFT_Noida_School' => $entityName == "AAFT Noida" ? $schoolName : "",
+                'mx_AAFT_University_School' => $entityName == "AAFT University" ? $schoolName : "",
+                'mx_AAFT_Online_School' => $entityName == "AAFT Online" ? $schoolName : "",
+                'mx_AAFT_University_Course' => $entityName == "AAFT University" ? $courseName : "",
+                'mx_AAFT_Noida_Course' => $entityName == "AAFT Noida" ? $courseName : "",
+                'mx_AAFT_Online_Course' => $entityName == "AAFT Online" ? $courseName : "",
+                'mx_Program_Type' => $program,
+                'OwnerId' => "itservices+4@aaft.com",
+                'mx_Industry_Sector' => $industrySector,
+                'mx_City' => $req->industryLocationVal,
+                'FirstName' => $resourcePerson,
+                'JobTitle' => $designation,
+                'EmailAddress' => $email,
+                'Phone' => $phone,
+                'Source' => $leadSource,
+                'ProspectStage' => $leadStage,
+                'mx_Industry_Engagement_Mode' => $industryEngagementValId,
+                'mx_Month' => $month,
+                'mx_Year' => $year,
                 // Add other fields as necessary
             ];
 
-            $response = $this->client->post('https://api.leadsquared.com/v2/LeadManagement.svc/Lead.Add', [
+            $response = $this->client->post('LeadManagement.svc/Lead.Add', [
+                'query' => [
+                    'accessKey' => $this->accessKey,
+                    'secretKey' => $this->secretKey,
+                ],
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
                 'json' => [
-                    'ApiKey' => $this->apiKey,
                     'Lead' => $leadData,
                 ],
             ]);
 
-            $companyName = DB::table('company_details')->where('comp_id', $compId)->value('comp_name');
             return response()->json(['mesg' => $companyName]);
         }
         else
