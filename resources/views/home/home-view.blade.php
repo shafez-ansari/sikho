@@ -40,7 +40,7 @@
                 text-align: inherit;
                 background-color: #fff;
                 border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
             }
             .logos {
                 margin-top: 20px;
@@ -172,7 +172,7 @@
 
             </div>
 
-            <div class="form-container" style="max-width: 500px; margin: auto; border: 1px solid #ccc; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+            <div class="form-container" style="max-width: 500px; margin: auto; border: 1px solid #ccc; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0px 4px 6px rgba(0,0,0,0.35);">
                 <div style="background-color: #333; padding: 10px 15px; border-radius: 8px 8px 0 0;">
                     <h2 style="color: white; font-size: 16px; margin: 0;">Verify Yourself</h2>
                 </div>
@@ -219,7 +219,6 @@
 <script type="text/javascript">
     function verifyOtp() {
         var email = $('#loginEmail').val();
-        $("#verifyBtn").hide();
         if (email == "") {
             $("#emailError").empty().html("Please enter email or unique ID");
         } else {
@@ -231,7 +230,6 @@
                     debugger;
                     if (data.loginMsg == "Invalid email or unique Id") {
                         $("#emailError").empty().html(data['loginMsg']);
-                        $("#verifyBtn").show();
                     }
                     else if(data.loginMsg == "Invalid OTP"){
                         $("#emailError").empty().html(data['loginMsg']);

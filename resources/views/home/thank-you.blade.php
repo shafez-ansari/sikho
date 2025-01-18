@@ -20,7 +20,7 @@
             background-color: #fff;
             text-align: center;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
         }
         .header img {
             max-height: 60px;
@@ -35,7 +35,7 @@
             border: 2px solid #d3d3d3;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
             display: inline-block;
             text-align: center;
             width: 80%;
