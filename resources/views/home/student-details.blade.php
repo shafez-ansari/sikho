@@ -370,8 +370,12 @@
         debugger;
         if (selected === 'yes') {
             document.getElementById('no').checked = false;
+            $("#yesId").val('1');
+            $("#noId").val('0');
         } else if (selected === 'no') {
             document.getElementById('yes').checked = false;
+            $("#yesId").val('0');
+            $("#noId").val('1');
         }
 
         $("#submitPlacementModal").modal('show');
@@ -386,18 +390,20 @@
         school = document.getElementById('hdnSchool').value;
         course = document.getElementById('hdnCourse').value;
 
-        if ($('#yes').is(':checked')) {
-            yes = 1;
-        }
-        else {
-            yes = 0;
-        }
-        if ($('#no').is(':checked')) {
-            no = 1;
-        }
-        else {
-            no = 0;
-        }
+        // if ($('#yes').is(':checked')) {
+        //     yes = 1;
+        // }
+        // else {
+        //     yes = 0;
+        // }
+        // if ($('#no').is(':checked')) {
+        //     no = 1;
+        // }
+        // else {
+        //     no = 0;
+        // }
+        yes = $("#yesId").val();
+        no = $("#noId").val();
         //errorElement.textContent = '';
 
         

@@ -108,16 +108,18 @@
     </style>
     
     <main class="main-content">
-        <div class="heading-section">Adding New Company/If Already Existing Company</div>
+        <div class="heading-section">Company</div>
         <div class="form-table-wrapper">
             <div class="form-section">
-                <form>
-                <input type="text" id="compSearch" placeholder="Enter new company name"> 
-                <span class="text-danger" id="compSearchValId"></span>                   
-                    <button type="button" style="max-width: 25%;" onclick="showDetails('');">Show Details</button>
-                    <a id="createCompanyId" style="display:none;" onclick="newCompany();" class="add-record">Add New Company</a>
-                </form>
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <input type="text" id="compSearch" placeholder="Enter new company name">                                        
+                        <button type="button" id="btnShow" style="max-width: 25%; margin-left:10px" onclick="showDetails('');">Show Details</button>
+                </div>
+                <span class="text-danger" id="compSearchValId" style="margin-left:15px"></span>
+                <br>
+                <a id="createCompanyId" style="display:none; margin-left:15px" onclick="newCompany();" class="add-record">Add New Company</a>
             </div>
+            <hr>
             <table id="compLeadDetailId" style="display:none;">
                 <thead>
                     <tr>
@@ -367,6 +369,13 @@
 
         function showDetails(name) {
             var compName = name == "" ? $('#compSearch').val() : name;
+            if(compName == "") {
+                $("#compSearchValId").text('Please enter company name.');
+                return false;
+            }
+            else {
+                $("#compSearchValId").text('');
+            }
             $("#compLeadDetailId").hide();
             
             $.ajax({
@@ -412,12 +421,16 @@
         function newCompany() {
             $("#companyFormId").show();
             $("#newRecordId").hide();
+            $("#compSearch").attr("disabled", "disabled");
+            $("#btnShow").attr("disabled", "disabled");
         }
 
         function newRecord() {
             $("#companyLeadFormId").show();
             $("#compLeadDetailId").hide();
             $("#newRecordId").hide();
+            $("#compSearch").attr("disabled", "disabled");
+            $("#btnShow").attr("disabled", "disabled");
         }
 
         $('#companyFormId').on('submit', function(e) {
@@ -474,6 +487,8 @@
                         $("#hdnCompanyId").val(response.mesg);
                         $("#companyFormId").hide();
                         $("#compSearchValId").empty().text('');
+                        $("#compSearch").prop("disabled", false);
+                        $("#btnShow").prop("disabled", false);
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON.mesg);
@@ -610,6 +625,8 @@
                     success: function(response) {
                         alert("HR details added successfully.");
                         $("#companyLeadFormId").hide();
+                        $("#compSearch").prop("disabled", false);
+                        $("#btnShow").prop("disabled", false);
                         showDetails(response.mesg);
                     },
                     error: function(xhr) {

@@ -82,12 +82,13 @@
                     <div class="col-md-2">
                         <select class="form-select" id="school" name="school" aria-label="Select School" onchange="getCourseList()">
                             <option selected value="">Select School</option>
+                            <option value="">Select Entity First</option>
                         </select>
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" id="course" name="course" aria-label="Select Course">
                             <option selected value="">Select Course</option>
-                            
+                            <option value="">Select School First</option>
                         </select>
                     </div>
                     

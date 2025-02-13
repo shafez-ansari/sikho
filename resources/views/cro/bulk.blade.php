@@ -113,6 +113,32 @@
         </form>
     </div>
 
+    <!-- Error Student Modal -->
+<div class="modal" id="errorStudentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="deleteTitleId"><b>Errors</b></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>Row Number</th>                    
+                    <th>Error Messages</th>
+                </tr>
+            </thead>
+            <tbody id="errorStudentModalBody">
+                
+            </tbody>
+        </table>
+      </div>
+      
+    </div>    
+  </div>
+</div>
+
 <script type="text/javascript">
    
     $('#uploadForm').on('submit', function(e) {
@@ -143,7 +169,25 @@
         processData: false,
         contentType: false,
         success: function(response) {
-            alert(response.message);
+            debugger;
+            if(!response.errors)
+            {
+                var tbody = $("#errorStudentModalBody").empty();
+                
+                for(var i = 0; i < response.errors.length;i++){
+                        var course_item_el = "<tr><td>" + response.errors[i]['Row'] + "</td><td>"+ response.errors[i]['Error Messages'] +"</td></tr>";
+                        tbody.append(course_item_el);
+                    }
+
+            }
+            else if(response.message == "File uploaded successfully")
+            {
+                $.notify(response.message, "success");
+            }
+            else
+            {
+                $.notify(response.message, "error");
+            }
         },
         error: function(xhr) {
             alert(xhr.responseJSON.message);

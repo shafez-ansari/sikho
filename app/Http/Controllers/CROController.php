@@ -145,6 +145,7 @@ class CROController extends Controller
         if(session('username') != "" && session('role') == "CRO")
         {        
             $email = session('username');
+            $errors = [];
             
             if ($req->hasFile('studentFile')) {
                 $file = $req->file('studentFile');
@@ -156,11 +157,65 @@ class CROController extends Controller
                     // Skip the header row
                     $header = fgetcsv($handle, 1000, ',');
 
+                    foreach ($header as $index => $row) 
+                    {
+                        $validator = Validator::make($row, [
+                            'Email ID' => 'email'
+                        ]);
+
+                        if ($validator->fails()) {
+                            $errors[] = [
+                                'Row' => $index + 1, // Add 1 to match human-readable row numbers
+                                'Error Messages' => $validator->errors()->all(),
+                            ];
+                        }
+                        else 
+                        {
+                            $entityID = DB::table('entity')->whereRaw('entity_name = ?', [$row['Entity']])->value('entity_id');
+                            $schoolId = DB::table('school')->whereRaw('school_name = ?', [$row['School']])->value('school_id');
+                            $courseId = DB::table('courses')->whereRaw('course_name = ?', [$row['Course']])->value('course_id');
+                            $programId = DB::table('program')->whereRaw('program_name = ?', [$row['Program Type']])->value('program_id');
+                            if(!$entityID)
+                            {
+                                $errors[] = [
+                                    'Row' => $index + 1,
+                                    'Error Messages' => 'Entity does not exist',
+                                ];
+                            }
+                            if(!$schoolId)
+                            {
+                                $errors[] = [
+                                    'Row' => $index + 1,
+                                    'Error Messages' => 'School does not exist',
+                                ];
+                            }
+                            if(!$courseId)
+                            {
+                                $errors[] = [
+                                    'Row' => $index + 1,
+                                    'Error Messages' => 'Course does not exist',
+                                ];
+                            }
+                            if(!$programId)
+                            {
+                                $errors[] = [
+                                    'Row' => $index + 1,
+                                    'Error Messages' => 'Program does not exist',
+                                ];
+                            }
+                        }
+                    }
+
+                    if (!empty($errors)) {
+                        return response()->json(['errors' => $errors]);
+                    }
+
                     // Prepare a batch insert array
                     $usersData = [];
                     $studentsData = [];
 
-                    while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+                    while (($row = fgetcsv($handle, 1000, ',')) !== false) 
+                    {
                         // Fetch related IDs
                         $entityID = DB::table('entity')->whereRaw('LOWER(entity_name) = ?', [strtolower($row[3])])->value('entity_id');
                         $schoolId = DB::table('school')->whereRaw('LOWER(school_name) = ?', [strtolower($row[4])])->value('school_id');
@@ -613,31 +668,31 @@ class CROController extends Controller
 
         $uniqueId = "HR" . $numbers; // Concatenate prefix with number
         
-        DB::table("company_lead_details")->insert([
-                'fk_comp_id' => $compId,
-                'fk_entity_id' => $entityId,
-                'fk_school_id' => $schoolId,
-                'fk_course_id' => $courseId,
-                'fk_program_id' => $programTypeId,
-                'resource_person' => $resourcePerson,
-                'designation' => $designation,
-                'primary_email' => $email,
-                'primary_phone' => $phone,
-                'fk_industry_sector_id' => $industrySector,
-                'fk_location_id' => $industryLocation,
-                'leadsource' => $leadSource,
-                'lead_stage' => $leadStage,
-                'industry_engagement' => $industryEngagementValId,
-                'fk_spoc_id' => $spocId,
-                'hr_unqiue_id' => $uniqueId,
-                'month' => $month,
-                'year' => $year,
-                'created_by' => session('username'),
-                'updated_by' => session('username'),
-                'created_date' => now(),
-                'updated_date' => now(),
-                'active' => 1
-            ]);
+        // DB::table("company_lead_details")->insert([
+        //         'fk_comp_id' => $compId,
+        //         'fk_entity_id' => $entityId,
+        //         'fk_school_id' => $schoolId,
+        //         'fk_course_id' => $courseId,
+        //         'fk_program_id' => $programTypeId,
+        //         'resource_person' => $resourcePerson,
+        //         'designation' => $designation,
+        //         'primary_email' => $email,
+        //         'primary_phone' => $phone,
+        //         'fk_industry_sector_id' => $industrySector,
+        //         'fk_location_id' => $industryLocation,
+        //         'leadsource' => $leadSource,
+        //         'lead_stage' => $leadStage,
+        //         'industry_engagement' => $industryEngagementValId,
+        //         'fk_spoc_id' => $spocId,
+        //         'hr_unqiue_id' => $uniqueId,
+        //         'month' => $month,
+        //         'year' => $year,
+        //         'created_by' => session('username'),
+        //         'updated_by' => session('username'),
+        //         'created_date' => now(),
+        //         'updated_date' => now(),
+        //         'active' => 1
+        //     ]);
 
             $companyName = DB::table('company_details')->where('comp_id', $compId)->value('comp_name');
             $entityName = DB::table('entity')->where('entity_id', $entityId)->value('entity_name');
@@ -648,33 +703,128 @@ class CROController extends Controller
             
             // Prepare lead data
             $leadData = [
-                "CompanyTypeName" => "Industry Alliances",
-                'Account' => $companyName,
-                'mx_Industry_Unique_ID' => $uniqueId,
-                'mx_AAFT_Entity' => $entityName,
-                'mx_AAFT_Noida_School' => $entityName == "AAFT Noida" ? $schoolName : "",
-                'mx_AAFT_University_School' => $entityName == "AAFT University" ? $schoolName : "",
-                'mx_AAFT_Online_School' => $entityName == "AAFT Online" ? $schoolName : "",
-                'mx_AAFT_University_Course' => $entityName == "AAFT University" ? $courseName : "",
-                'mx_AAFT_Noida_Course' => $entityName == "AAFT Noida" ? $courseName : "",
-                'mx_AAFT_Online_Course' => $entityName == "AAFT Online" ? $courseName : "",
-                'mx_Program_Type' => $program,
-                'OwnerId' => "itservices+4@aaft.com",
-                'mx_Industry_Sector' => $industrySector,
-                'mx_City' => $req->industryLocationVal,
-                'FirstName' => $resourcePerson,
-                'JobTitle' => $designation,
-                'EmailAddress' => $email,
-                'Phone' => $phone,
-                'Source' => $leadSource,
-                'ProspectStage' => $leadStage,
-                'mx_Industry_Engagement_Mode' => $industryEngagementValId,
-                'mx_Month' => $month,
-                'mx_Year' => $year,
-                // Add other fields as necessary
+                [
+                "Attribute" => "CompanyTypeName",
+                "Value" => "Industry Alliances"
+                ],
+                [
+                "Attribute" => "CompanyName",
+                "Value" => $companyName
+                ],
+                [
+                "Attribute" => "mx_Industry_Unique_ID",
+                "Value" => $uniqueId
+                ],
+                [
+                "Attribute" => "mx_AAFT_Entity",
+                "Value" => $entityName
+                ],
+                [
+                "Attribute" => "mx_AAFT_Noida_School",
+                "Value" => $entityName == "AAFT Noida" ? $schoolName : ""
+                ],
+                [
+                "Attribute" => "mx_AAFT_University_School",
+                "Value" => $entityName == "AAFT University" ? $schoolName : ""
+                ],
+                [
+                "Attribute" => "mx_AAFT_Online_School",
+                "Value" => $entityName == "AAFT Online" ? $schoolName : ""
+                ],
+                [
+                    "Attribute" => "mx_AAFT_University_Course",
+                    "Value" => $entityName == "AAFT University" ? $courseName : ""
+                ],
+                [
+                    "Attribute" => "mx_AAFT_Noida_Course",
+                    "Value" => $entityName == "AAFT Noida" ? $courseName : ""
+                ],
+                [
+                    "Attribute" => "mx_AAFT_Online_Course",
+                    "Value" => $entityName == "AAFT Online" ? $courseName : ""
+                ],
+                [
+                    "Attribute" => "mx_Program_Type",
+                    "Value" => $program
+                ],                
+                [
+                    "Attribute" => "mx_Industry_Sector",
+                    "Value" => $industrySector
+                ],
+                [
+                    "Attribute" => "mx_City",
+                    "Value" => $req->industryLocationVal
+                ],
+                [
+                    "Attribute" => "FirstName",
+                    "Value" => $resourcePerson
+                ],
+                [
+                    "Attribute" => "JobTitle",
+                    "Value" => $designation
+                ],
+                [
+                    "Attribute" => "EmailAddress",
+                    "Value" => $email
+                ],
+                [
+                    "Attribute" => "Phone",
+                    "Value" => $phone
+                ],
+                [
+                    "Attribute" => "Source",
+                    "Value" => $leadSource
+                ],
+                [
+                    "Attribute" => "ProspectStage",
+                    "Value" => $leadStage
+                ],
+                [
+                    "Attribute" => "mx_Industry_Engagement_Mode",
+                    "Value" => $industryEngagementValId
+                ],
+                [
+                    "Attribute" => "mx_Month",
+                    "Value" => $month
+                ],
+                [
+                    "Attribute" => "mx_Year",
+                    "Value" => $year
+                ],
+                [
+                    "Attribute" => "CreatedByName",
+                    "Value" => "itservices+4@aaft.com"
+                ]
             ];
 
-            $response = $this->client->post('LeadManagement.svc/Lead.Add', [
+            // $leadData = [
+            //     "CompanyTypeName" => "Industry Alliances",
+            //     'Account' => $companyName,
+            //     'mx_Industry_Unique_ID' => $uniqueId,
+            //     'mx_AAFT_Entity' => $entityName,
+            //     'mx_AAFT_Noida_School' => $entityName == "AAFT Noida" ? $schoolName : "",
+            //     'mx_AAFT_University_School' => $entityName == "AAFT University" ? $schoolName : "",
+            //     'mx_AAFT_Online_School' => $entityName == "AAFT Online" ? $schoolName : "",
+            //     'mx_AAFT_University_Course' => $entityName == "AAFT University" ? $courseName : "",
+            //     'mx_AAFT_Noida_Course' => $entityName == "AAFT Noida" ? $courseName : "",
+            //     'mx_AAFT_Online_Course' => $entityName == "AAFT Online" ? $courseName : "",
+            //     'mx_Program_Type' => $program,
+            //     'OwnerId' => "itservices+4@aaft.com",
+            //     'mx_Industry_Sector' => $industrySector,
+            //     'mx_City' => $req->industryLocationVal,
+            //     'FirstName' => $resourcePerson,
+            //     'JobTitle' => $designation,
+            //     'EmailAddress' => $email,
+            //     'Phone' => $phone,
+            //     'Source' => $leadSource,
+            //     'ProspectStage' => $leadStage,
+            //     'mx_Industry_Engagement_Mode' => $industryEngagementValId,
+            //     'mx_Month' => $month,
+            //     'mx_Year' => $year,
+            //     // Add other fields as necessary
+            // ];
+
+            $response = $this->client->post('LeadManagement.svc/Lead.Capture', [
                 'query' => [
                     'accessKey' => $this->accessKey,
                     'secretKey' => $this->secretKey,
@@ -682,9 +832,7 @@ class CROController extends Controller
                 'headers' => [
                     'Content-Type' => 'application/json',
                 ],
-                'json' => [
-                    'Lead' => $leadData,
-                ],
+                'json' => $leadData,
             ]);
 
             return response()->json(['mesg' => $companyName]);

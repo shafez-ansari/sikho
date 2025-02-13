@@ -228,6 +228,7 @@
                 data: { 'email': email },
                 success: function (data) {
                     debugger;
+                    $("#verifyBtn").hide();
                     if (data.loginMsg == "Invalid email or unique Id") {
                         $("#emailError").empty().html(data['loginMsg']);
                     }
