@@ -52,11 +52,13 @@
             cursor: pointer;
         }
         .message-box p {
-            font-size: 1.1rem;
+            font-weight: bold;
+            font-size: 15px;
             margin-bottom: 10px;
             color: #000;
         }
         .message-box .unique-id-box {
+            font-size: 16px;
             background-color: #f8d7da; /* Light pink background */
             color: #000; /* Black text */
             font-weight: bold;
