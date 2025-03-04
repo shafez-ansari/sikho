@@ -169,28 +169,21 @@
         processData: false,
         contentType: false,
         success: function(response) {
-            debugger;
-            if(!response.errors)
-            {
-                var tbody = $("#errorStudentModalBody").empty();
-                
-                for(var i = 0; i < response.errors.length;i++){
-                        var course_item_el = "<tr><td>" + response.errors[i]['Row'] + "</td><td>"+ response.errors[i]['Error Messages'] +"</td></tr>";
-                        tbody.append(course_item_el);
-                    }
-
-            }
-            else if(response.message == "File uploaded successfully")
+            
+            if(response.message == "File uploaded successfully")
             {
                 $.notify(response.message, "success");
+                setTimeout(function(){
+                    location.reload(); 
+                    },2000);
             }
             else
             {
                 $.notify(response.message, "error");
+                setTimeout(function(){
+                    location.reload(); 
+                    },2000);s
             }
-        },
-        error: function(xhr) {
-            alert(xhr.responseJSON.message);
         }
     });
     });

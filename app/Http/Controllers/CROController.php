@@ -156,60 +156,7 @@ class CROController extends Controller
                 if (($handle = fopen($path, 'r')) !== false) {
                     // Skip the header row
                     $header = fgetcsv($handle, 1000, ',');
-
-                    foreach ($header as $index => $row) 
-                    {
-                        $validator = Validator::make($row, [
-                            'Email ID' => 'email'
-                        ]);
-
-                        if ($validator->fails()) {
-                            $errors[] = [
-                                'Row' => $index + 1, // Add 1 to match human-readable row numbers
-                                'Error Messages' => $validator->errors()->all(),
-                            ];
-                        }
-                        else 
-                        {
-                            $entityID = DB::table('entity')->whereRaw('entity_name = ?', [$row['Entity']])->value('entity_id');
-                            $schoolId = DB::table('school')->whereRaw('school_name = ?', [$row['School']])->value('school_id');
-                            $courseId = DB::table('courses')->whereRaw('course_name = ?', [$row['Course']])->value('course_id');
-                            $programId = DB::table('program')->whereRaw('program_name = ?', [$row['Program Type']])->value('program_id');
-                            if(!$entityID)
-                            {
-                                $errors[] = [
-                                    'Row' => $index + 1,
-                                    'Error Messages' => 'Entity does not exist',
-                                ];
-                            }
-                            if(!$schoolId)
-                            {
-                                $errors[] = [
-                                    'Row' => $index + 1,
-                                    'Error Messages' => 'School does not exist',
-                                ];
-                            }
-                            if(!$courseId)
-                            {
-                                $errors[] = [
-                                    'Row' => $index + 1,
-                                    'Error Messages' => 'Course does not exist',
-                                ];
-                            }
-                            if(!$programId)
-                            {
-                                $errors[] = [
-                                    'Row' => $index + 1,
-                                    'Error Messages' => 'Program does not exist',
-                                ];
-                            }
-                        }
-                    }
-
-                    if (!empty($errors)) {
-                        return response()->json(['errors' => $errors]);
-                    }
-
+                    
                     // Prepare a batch insert array
                     $usersData = [];
                     $studentsData = [];
