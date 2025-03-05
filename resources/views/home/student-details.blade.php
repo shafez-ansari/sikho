@@ -149,7 +149,6 @@
     }
 
     .placement-section .checkbox-container {
-        flex-direction: column;
         align-items: flex-start;
     }
 
@@ -367,7 +366,7 @@
 
 <script type="text/javascript">
     function toggleCheckbox(selected) {
-        debugger;
+        
         if (selected === 'yes') {
             document.getElementById('no').checked = false;
             $("#yesId").val('1');
@@ -382,7 +381,7 @@
     }
 
     function submitPlacement() {
-        debugger;
+        
         const yesChecked = document.getElementById('yes').checked;
         const noChecked = document.getElementById('no').checked;
         const errorElement = document.getElementById('yesornoerror');

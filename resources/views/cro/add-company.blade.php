@@ -272,7 +272,7 @@
                         <label for="phoneId">Phone Number</label>
                     </div>
                     <div class="col-md-6">
-                        <input type="number" id="phoneId" name="phoneId" class="form-control">
+                        <input type="number" id="phoneId" name="phoneId" class="form-control" maxlength="10">
                         <span class="text-danger" id="phoneValId"></span>
                     </div>
                 </div>
@@ -623,7 +623,7 @@
                     type: "GET",
                     data: { compId : compId , entityValId: entityValId, schoolValId: schoolValId, courseValId: courseValId, programValId: programTypeValId, resourcePersonValId: resourcePersonValId, designationValId: designationValId, emailValId: emailValId, phoneValId: phoneValId, industrySectorValId: industrySectorValId, industryLocationValId: industryLocationValId, leadSourceValId: leadSourceValId, leadStageValId: leadStageValId, industryEngagementValId: industryEngagementValId },
                     success: function(response) {
-                        alert("HR details added successfully.");
+                        $.notify("HR details added successfully.", "success");
                         $("#companyLeadFormId").hide();
                         $("#compSearch").prop("disabled", false);
                         $("#btnShow").prop("disabled", false);

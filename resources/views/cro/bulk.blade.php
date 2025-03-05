@@ -98,6 +98,7 @@
     <div class="upload-section">
         Upload Data
     </div>
+    <div id="loader" class="loader" style="display: none;"></div>
     <div >
         <a style="float:right; padding-top: 10px; margin-right: 100px;" href="{{url('/download-student-data-template')}}" >Download Template</a>
     </div>
@@ -144,13 +145,13 @@
     $('#uploadForm').on('submit', function(e) {
     e.preventDefault();
 
+    $('#loader').show();
     var file = document.getElementById('studentFile').files[0];
     if (!file) {
         $('#studentValidationId').html('Please select a file to upload.');
         return;
     }
-    debugger;
-
+    
     var fileExt = file.name.split('.').pop().toLowerCase();
     if (fileExt != 'csv') {
         $('#studentValidationId').html('Please upload a valid CSV file.');
@@ -169,7 +170,7 @@
         processData: false,
         contentType: false,
         success: function(response) {
-            
+            $('#loader').hide();
             if(response.message == "File uploaded successfully")
             {
                 $.notify(response.message, "success");
@@ -182,7 +183,7 @@
                 $.notify(response.message, "error");
                 setTimeout(function(){
                     location.reload(); 
-                    },2000);s
+                    },2000);
             }
         }
     });

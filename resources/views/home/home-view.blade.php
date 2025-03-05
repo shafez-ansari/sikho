@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AAFT Corporate Resource Center</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js"></script>
         <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">  
@@ -19,6 +20,7 @@
                 box-sizing: border-box;
                 background-color: #F2F2F2;
             }
+            
             .header {
                 background-color: #333;
                 color: #fff;
@@ -124,6 +126,25 @@
     background-color: #ff0000;
     border-color: #ff0000;
 }
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin: -30px 0 0 -30px; /* Center the loader */
+    z-index: 1000;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
             /* Responsive Design */
             @media screen and (max-width: 768px) {
                 .container {
@@ -171,7 +192,7 @@
                 <img src="{{url('/images/aaftt.jpg')}}" alt="AAFT Online">
 
             </div>
-
+            <div id="loader" class="loader" style="display: none;"></div>
             <div class="form-container" style="max-width: 500px; margin: auto; border: 1px solid #ccc; border-radius: 10px; padding: 20px; background-color: #fff; box-shadow: 0px 4px 6px rgba(0,0,0,0.35);">
                 <div style="background-color: #333; padding: 10px 15px; border-radius: 8px 8px 0 0;">
                     <h2 style="color: white; font-size: 16px; margin: 0;">Verify Yourself</h2>
@@ -222,15 +243,17 @@
         if (email == "") {
             $("#emailError").empty().html("Please enter email or unique ID");
         } else {
+            $('#loader').show();
             $.ajax({
                 type: 'get',
                 url: "/verify-email",
                 data: { 'email': email },
                 success: function (data) {
-                    debugger;
+                    $('#loader').hide();
                     $("#verifyBtn").hide();
                     if (data.loginMsg == "Invalid email or unique Id") {
                         $("#emailError").empty().html(data['loginMsg']);
+                        $("#verifyBtn").show();
                     }
                     else if(data.loginMsg == "Invalid OTP"){
                         $("#emailError").empty().html(data['loginMsg']);
@@ -250,15 +273,16 @@
 
     function resendOtp() {
         var email = $('#loginEmail').val();
+        $('#loader').show();
         $("#emailError").empty().html('');
         $.ajax({
             type: 'get',
             url: "/resend-otp",
             data: { 'email': email },
             success: function (data) {
-                debugger;
+                $('#loader').hide();
                 if (data['loginMsg'] == "OTP resend generated") {
-                    alert("OTP re-generated successfully");
+                    $.notify("OTP re-generated successfully", "success");
                 }
             }
         });
@@ -270,13 +294,16 @@
         if (otp == "") {
             $("#otpError").empty().html("Please enter OTP");
         } else {
+            $('#loader').show();
             $.ajax({
                 type: 'get',
                 url: "/submit-otp",
                 data: { 'email': email, 'otp': otp },
                 success: function (data) {
+                    $('#loader').hide();
                     if (data['loginMsg'] == "Invalid OTP") {
                         $("#otpError").empty().html(data['loginMsg']);
+                        
                     } else {
                         window.location = data['loginMsg'];
                     }

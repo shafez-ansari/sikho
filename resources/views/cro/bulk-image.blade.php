@@ -98,7 +98,7 @@
     <div class="upload-section">
         Upload Image
     </div>
-
+    <div id="loader" class="loader" style="display: none;"></div>
     <div class="upload-area">
         <form id="uploadForm" enctype="multipart/form-data">
             @csrf            
@@ -120,17 +120,18 @@
             $('#studentValidationId').html('Please select at least one file to upload.');
             return;
         }
-        debugger;
+        $('#loader').show();
         let validExtensions = ['jpg', 'jpeg'];
         let formData = new FormData();
         formData.append('_token', '{{ csrf_token() }}');
-
+        
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
             let fileExt = file.name.split('.').pop().toLowerCase();
 
             if (!validExtensions.includes(fileExt)) {
                 $('#studentValidationId').html('Please upload images with .jpg or .jpeg extension only.');
+                $('#loader').hide();
                 return;
             }
 
@@ -147,9 +148,14 @@
         processData: false,
         contentType: false,
         success: function(response) {
-            alert(response.message);
+            $('#loader').hide();
+            $.notify(response.message, "success");
+            setTimeout(function(){
+                    location.reload(); 
+                    },2000);
         },
         error: function(xhr) {
+            $('#loader').hide();
             alert(xhr.responseJSON.message);
         }
     });

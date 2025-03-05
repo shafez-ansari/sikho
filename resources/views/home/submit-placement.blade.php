@@ -294,7 +294,7 @@
 
     function submitQuestionarie() {
         // Add form submission logic here
-        debugger;        
+          
         var entityId = $("#hdnEntityName").val();
         var yes = $("#hdnYes").val();
         var no = $("#hdnNo").val();
@@ -510,7 +510,7 @@
                     $("#intervalError").text("");
                 }
             }
-            debugger;
+            
             if($("#notPlacementError").text() == "" && $("#intervalError").text() == "") {
                 // Submit form
                 $.ajax({

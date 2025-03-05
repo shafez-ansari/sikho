@@ -82,8 +82,6 @@
     </style>
 </head>
 <body>
-
-
     <div class="container">
         <div class="message-box">
             <!-- Close Button -->
