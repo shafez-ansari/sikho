@@ -187,7 +187,7 @@
             }
             @media screen and (max-width: 480px) {
                 .header {
-                    padding: 10px;
+                    padding: 30px;
                 }
                 .header h1 {
                     font-size: 1.2rem;
