@@ -8,8 +8,9 @@ use Intervention\Image\Exceptions\NotWritableException;
 use Intervention\Image\Exceptions\RuntimeException;
 use Intervention\Image\Interfaces\FileInterface;
 use Intervention\Image\Traits\CanBuildFilePointer;
+use Stringable;
 
-class File implements FileInterface
+class File implements FileInterface, Stringable
 {
     use CanBuildFilePointer;
 
@@ -64,15 +65,15 @@ class File implements FileInterface
 
         if (is_file($filepath) && !is_writable($filepath)) {
             throw new NotWritableException(
-                "Can't write image. Path ({$filepath}) is not writable."
+                sprintf("Can't write image. Path (%s) is not writable.", $filepath)
             );
         }
 
         // write data
-        $saved = @file_put_contents($filepath, $this->pointer);
+        $saved = @file_put_contents($filepath, $this->toFilePointer());
         if ($saved === false) {
             throw new NotWritableException(
-                "Can't write image data to path ({$filepath})."
+                sprintf("Can't write image data to path (%s).", $filepath)
             );
         }
     }
@@ -84,7 +85,7 @@ class File implements FileInterface
      */
     public function toString(): string
     {
-        return stream_get_contents($this->pointer, offset: 0);
+        return stream_get_contents($this->toFilePointer(), offset: 0);
     }
 
     /**
@@ -106,7 +107,7 @@ class File implements FileInterface
      */
     public function size(): int
     {
-        $info = fstat($this->pointer);
+        $info = fstat($this->toFilePointer());
 
         return intval($info['size']);
     }

@@ -1,0 +1,30 @@
+2025-03-08 10:49:44,279 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2025-03-08 10:49:44,280 INFO supervisord started with pid 1
+2025-03-08 10:49:45,281 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:49:45,284 INFO spawned: 'nginx' with pid 7
+2025-03-08 10:49:45,286 INFO spawned: 'php-fpm' with pid 8
+2025-03-08 10:49:46,318 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:49:46,318 INFO success: nginx entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-03-08 10:49:46,318 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-03-08 10:49:48,321 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:49:51,325 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:49:51,325 INFO gave up: mysql entered FATAL state, too many start retries too quickly
+2025-03-08 10:54:19,753 WARN received SIGQUIT indicating exit request
+2025-03-08 10:54:19,753 INFO waiting for nginx, php-fpm to die
+2025-03-08 10:54:19,757 INFO stopped: php-fpm (exit status 0)
+2025-03-08 10:54:19,759 INFO stopped: nginx (exit status 0)
+2025-03-08 10:54:20,137 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2025-03-08 10:54:20,138 INFO supervisord started with pid 1
+2025-03-08 10:54:21,139 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:54:21,140 INFO spawned: 'nginx' with pid 7
+2025-03-08 10:54:21,142 INFO spawned: 'php-fpm' with pid 8
+2025-03-08 10:54:22,159 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:54:22,159 INFO success: nginx entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-03-08 10:54:22,159 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-03-08 10:54:24,162 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:54:27,540 INFO spawnerr: can't find command 'mysqld_safe'
+2025-03-08 10:54:27,540 INFO gave up: mysql entered FATAL state, too many start retries too quickly
+2025-03-08 11:07:31,654 WARN received SIGQUIT indicating exit request
+2025-03-08 11:07:31,655 INFO waiting for nginx, php-fpm to die
+2025-03-08 11:07:31,657 INFO stopped: php-fpm (exit status 0)
+2025-03-08 11:07:31,659 INFO stopped: nginx (exit status 0)

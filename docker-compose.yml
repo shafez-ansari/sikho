@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: laravel_app
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - mysql_db
+    networks:
+      - laravel_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    restart: always
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - .:/var/www
+    depends_on:
+      - app
+    networks:
+      - laravel_network
+
+  mysql_db:
+    image: mysql:8
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123  # ✅ Root password set
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - laravel_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql_db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root123  # ✅ Root password set for PHPMyAdmin
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql_db
+    networks:
+      - laravel_network
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+
+volumes:
+  mysql_data:
+
