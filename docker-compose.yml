@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: placements-app:latest
+    image: shafaiz/aaftconnect:latest
     container_name: laravel_app
     restart: always
     ports:
