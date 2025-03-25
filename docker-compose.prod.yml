@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mysql_db:
+    image: mysql:8.0.41
+    container_name: mysql_prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: placement
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_prod
+    restart: always
+    depends_on:
+      - mysql_db
+    environment:
+      PMA_HOST: mysql_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8084:80"
+
+  sikho-app:
+    image: sikho-app:prod
+    container_name: sikho_prod
+    restart: always
+    depends_on:
+      - mysql_db
+      - mailpit
+    ports:
+      - "9003:9000"
+    environment:
+      APP_ENV: production
+      DB_HOST: mysql_db
+      DB_DATABASE: placement
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit_prod
+    restart: always
+    ports:
+      - "8029:8025"
+      - "1028:1025"
+
+volumes:
+  mysql_prod_data:
+
