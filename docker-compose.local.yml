@@ -26,7 +26,7 @@ services:
       - "8081:80"
 
   sikho-app:
-    image: sikho-app:latest
+    image: shafaiz/sikho-app:latest
     container_name: sikho_local
     restart: always
     depends_on:

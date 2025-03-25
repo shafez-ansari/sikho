@@ -26,7 +26,7 @@ services:
       - "8084:80"
 
   sikho-app:
-    image: sikho-app:prod
+    image: shafaiz/sikho-app:prod
     container_name: sikho_prod
     restart: always
     depends_on:
