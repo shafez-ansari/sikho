@@ -1,0 +1,187 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sikho
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sikho-app
+  namespace: sikho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sikho-app
+  template:
+    metadata:
+      labels:
+        app: sikho-app
+    spec:
+      containers:
+        - name: sikho-app
+          image: shafaiz/sikho-app:latest
+          ports:
+            - containerPort: 9000
+          env:
+            - name: APP_ENV
+              value: "local"
+            - name: DB_HOST
+              value: "mysql-db"
+            - name: DB_DATABASE
+              value: "placement"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+          volumeMounts:
+            - name: app-storage
+              mountPath: /app
+      volumes:
+        - name: app-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sikho-app-service
+  namespace: sikho
+spec:
+  selector:
+    app: sikho-app
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db
+  namespace: sikho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+        - name: mysql-db
+          image: mysql:8.0.41
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+            - name: MYSQL_DATABASE
+              value: "placement"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db-service
+  namespace: sikho
+spec:
+  selector:
+    app: mysql-db
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin
+  namespace: sikho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+        - name: phpmyadmin
+          image: phpmyadmin/phpmyadmin
+          env:
+            - name: PMA_HOST
+              value: "mysql-db"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  namespace: sikho
+spec:
+  selector:
+    app: phpmyadmin
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 80
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailpit
+  namespace: sikho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailpit
+  template:
+    metadata:
+      labels:
+        app: mailpit
+    spec:
+      containers:
+        - name: mailpit
+          image: axllent/mailpit
+          ports:
+            - containerPort: 8025
+            - containerPort: 1025
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailpit-service
+  namespace: sikho
+spec:
+  selector:
+    app: mailpit
+  ports:
+    - protocol: TCP
+      port: 8026
+      targetPort: 8025
+      name: web-ui
+    - protocol: TCP
+      port: 1025
+      targetPort: 1025
+      name: smtp
+  type: NodePort
+
+
