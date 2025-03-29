@@ -1,7 +1,5 @@
 composer.json
 composer.lock
-.env
-node_modules/
 vendor/
-storage/
-composer.json
+.env
+
